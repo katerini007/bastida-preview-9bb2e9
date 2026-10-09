@@ -80,7 +80,7 @@ h1{font-family:var(--fd);font-weight:400;font-size:clamp(30px,4.6vw,42px);line-h
 /* A/B picker */
 .ab{margin-top:14px}
 .ab .lab{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--clay);margin-bottom:9px}
-.ab .opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:330px}
+.ab .opts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:400px}
 .ab button{border:0;background:none;padding:0;cursor:pointer;text-align:left;display:grid;gap:6px}
 .ab figure{margin:0;aspect-ratio:4/5;overflow:hidden;border-radius:3px;
   outline:1px solid var(--hair);outline-offset:-1px;transition:outline-color .2s}
@@ -167,7 +167,7 @@ const POSTS=[
   video:"video/comingsoon.mp4"},
  {id:"p4",n:"4",date:"Próxima",fmt:"Foto",pillar:"La casa · Storytelling",
   hk:"Reformer en Jerez.",nt:"Pendiente: sustituir por reel.",
-  alt:0,alts:[{label:"Más clara",img:"covers/p4.jpg"},{label:"Más oscura",img:"covers/p4-dark.jpg"}]}
+  alt:0,alts:[{label:"Clara · con texto",img:"covers/p4.jpg"},{label:"Oscura · con texto",img:"covers/p4-dark.jpg"},{label:"Sin texto",img:"covers/p4-nologo.jpg"}]}
 ];
 const ICON={Reel:"▶",Carrusel:"❏",Foto:"▢"};
 const KEY="bastida.feed.v1";
