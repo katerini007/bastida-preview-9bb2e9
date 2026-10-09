@@ -126,7 +126,7 @@ h1{font-family:var(--fd);font-weight:400;font-size:clamp(30px,4.6vw,42px);line-h
     <div class="tabs"><i>Publicaciones</i></div>
     <div class="grid" id="grid"></div>
     <div class="tools">
-      <span class="hint">Arrastra para reordenar el feed.</span>
+      <span class="hint">Arrastra para reordenar. Pulsa una publicación para ver sus versiones.</span>
       <button id="copy">Copiar orden</button>
       <button id="reset">Restablecer</button>
     </div>
@@ -160,8 +160,9 @@ const POSTS=[
   hk:"Únete al equipo — buscamos instructores.",live:"https://www.instagram.com/p/DdRVK8lCpuT/"},
  {id:"live3",img:"covers/live3.jpg",date:"14 sep",fmt:"Foto",pillar:"Prueba social · Educativo",
   hk:"Algo nuevo está llegando a Jerez ✨ Qué es Mat Sculpt.",live:"https://www.instagram.com/p/DdRVgpHKK19/"},
- {id:"p2",n:"2",img:"covers/p2.jpg",date:"Próxima",fmt:"Reel",pillar:"La casa · ASMR",
-  hk:"La cuenta atrás.",nt:"Pulsa para ver el reel — cuenta atrás ASMR.",video:"video/countdown.mp4"},
+ {id:"p2",n:"2",date:"Próxima",fmt:"Reel",pillar:"La casa · ASMR",
+  hk:"La cuenta atrás.",nt:"Pulsa para ver el reel — cuenta atrás ASMR.",video:"video/countdown.mp4",
+  alt:0,alts:[{label:"Original",img:"covers/p2.jpg"},{label:"Con color",img:"covers/p2-graded.jpg"}]},
  {id:"p3",n:"3",img:"covers/p3.jpg",date:"Próxima",fmt:"Reel",pillar:"La casa · Storytelling",
   hk:"Something is coming soon to Jerez.",nt:"El teaser. Sin fecha, sin precio, sin producto. 6 s.",
   video:"video/comingsoon.mp4"},
@@ -169,7 +170,11 @@ const POSTS=[
   hk:"Reformer en Jerez.",nt:"Pendiente: sustituir por reel.",
   alt:0,alts:[{label:"Clara",img:"covers/p4.jpg"},{label:"Oscura",img:"covers/p4-dark.jpg"}]},
  {id:"p5",n:"5",img:"covers/p5-nologo.jpg",date:"Próxima",fmt:"Foto",pillar:"La casa · ASMR",
-  hk:"Descanso.",nt:"Pendiente: falta la versión con logo para comparar."}
+  hk:"Descanso.",nt:"Pendiente: falta la versión con logo para comparar."},
+ {id:"p6",n:"6",img:"covers/p6.jpg",date:"Próxima",fmt:"Foto",pillar:"La casa · ASMR",
+  hk:"La luz de las once.",nt:""},
+ {id:"p7",n:"7",img:"covers/p7.jpg",date:"Próxima",fmt:"Foto",pillar:"La casa · Storytelling",
+  hk:"Barre, de verdad.",nt:""}
 ];
 const ICON={Reel:"▶",Carrusel:"❏",Foto:"▢"};
 const KEY="bastida.feed.v1";
@@ -200,7 +205,7 @@ function render(){
         <p class="hk">${p.hk}</p>
         ${p.nt?`<p class="nt">${p.nt}</p>`:""}
         ${p.live?`<p class="nt"><a href="${p.live}" target="_blank" rel="noopener" style="color:var(--clay)">Ver en Instagram →</a></p>`:""}
-        ${p.alts?`<div class="ab"><div class="lab">Elige una versión</div><div class="opts">${
+        ${p.alts?`<div class="ab"><div class="lab">Elige una versión de esta publicación</div><div class="opts">${
           p.alts.map((a,i)=>`<button data-alt="${i}" data-for="${p.id}" aria-pressed="${p.alt===i}">
             <figure><img src="${a.img}" alt=""></figure>
             <span class="cap"><i></i>${a.label}</span></button>`).join("")}</div></div>`:""}
