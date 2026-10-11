@@ -61,7 +61,24 @@ body{background:var(--tint);color:var(--fg);font-family:var(--fb);font-size:14px
 .tools button:hover{border-bottom-color:var(--clay)}
 .tools .hint{flex:1;min-width:120px;text-transform:none;letter-spacing:0;font-size:11.5px}
 
-.side{min-width:0;display:grid;gap:26px}
+.side{min-width:0;display:grid;gap:18px;position:sticky;top:44px}
+#detail .num{font-family:var(--fd);font-size:46px;line-height:.85;color:var(--clay);margin:0 0 2px}
+#detail .when{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin:0 0 18px}
+#detail h2{font-family:var(--fd);font-weight:400;font-size:clamp(24px,3.4vw,32px);line-height:1.12;margin:0 0 20px}
+.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--hair);
+  border:1px solid var(--hair);margin:0 0 22px}
+.facts div{background:var(--bg);padding:11px 13px}
+.facts dt{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin:0 0 3px}
+.facts dd{margin:0;font-size:13.5px;font-weight:500}
+.facts .y{color:#8A6A2F}.facts .n{color:var(--dim)}.facts .t{color:var(--clay)}
+.cap{border-top:1px solid var(--hair);padding-top:16px;margin-bottom:16px}
+.cap .lang{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--clay);margin-bottom:6px}
+.cap p{margin:0 0 14px;white-space:pre-line;font-size:14px;line-height:1.6}
+.cap p.en{color:var(--dim);font-size:13.5px}
+.why{border-top:1px solid var(--hair);padding-top:14px;font-size:12.5px;color:var(--dim);line-height:1.6;margin:0 0 16px}
+.why b{color:var(--fg);font-weight:500}
+.igl{font-size:12.5px;color:var(--clay);text-decoration:none}
+.empty{color:var(--dim);font-size:14px}
 .eyebrow{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin:0 0 10px}
 h1{font-family:var(--fd);font-weight:400;font-size:clamp(30px,4.6vw,42px);line-height:1.06;margin:0 0 .4em}
 .lede{color:var(--dim);margin:0;max-width:52ch;font-size:14.5px}
@@ -85,12 +102,12 @@ h1{font-family:var(--fd);font-weight:400;font-size:clamp(30px,4.6vw,42px);line-h
 .ab figure{margin:0;aspect-ratio:4/5;overflow:hidden;border-radius:3px;
   outline:1px solid var(--hair);outline-offset:-1px;transition:outline-color .2s}
 .ab img{width:100%;height:100%;object-fit:cover;display:block}
-.ab .cap{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);
+.ab .cap2{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);
   display:flex;align-items:center;gap:6px}
-.ab .cap i{font-style:normal;width:8px;height:8px;border-radius:50%;border:1px solid var(--hair);flex:none}
+.ab .cap2 i{font-style:normal;width:8px;height:8px;border-radius:50%;border:1px solid var(--hair);flex:none}
 .ab button[aria-pressed="true"] figure{outline:2px solid var(--clay)}
-.ab button[aria-pressed="true"] .cap{color:var(--fg)}
-.ab button[aria-pressed="true"] .cap i{background:var(--clay);border-color:var(--clay)}
+.ab button[aria-pressed="true"] .cap2{color:var(--fg)}
+.ab button[aria-pressed="true"] .cap2 i{background:var(--clay);border-color:var(--clay)}
 
 .lb{position:fixed;inset:0;background:rgba(40,31,24,.9);display:none;place-items:center;z-index:50;padding:24px}
 .lb[data-open]{display:grid}
@@ -126,23 +143,15 @@ h1{font-family:var(--fd);font-weight:400;font-size:clamp(30px,4.6vw,42px);line-h
     <div class="tabs"><i>Publicaciones</i></div>
     <div class="grid" id="grid"></div>
     <div class="tools">
-      <span class="hint">Arrastra para reordenar. Pulsa una publicación para ver sus versiones.</span>
-      <button id="copy">Copiar orden</button>
-      <button id="reset">Restablecer</button>
+      <span class="hint">Drag to reorder · tap a post for its detail</span>
+      <button id="copy">Copy order</button>
+      <button id="reset">Reset</button>
     </div>
   </div>
 
   <div class="side">
-    <div>
-      <p class="eyebrow">Bastida × Zero To Reel</p>
-      <h1>El feed, en orden</h1>
-      <p class="lede">Las publicaciones confirmadas, en la secuencia en que saldrán.
-        Arriba, lo más reciente. Puedes arrastrar las imágenes para probar otro orden.</p>
-    </div>
-    <hr class="rule">
-    <div id="list"></div>
-    <hr class="rule">
-    <p class="nt" style="color:var(--dim);font-size:12px;margin:0">Vista previa interna.</p>
+    <p class="eyebrow">Bastida × Zero To Reel</p>
+    <div id="detail"></div>
   </div>
 </div>
 
@@ -154,70 +163,81 @@ h1{font-family:var(--fd);font-weight:400;font-size:clamp(30px,4.6vw,42px);line-h
 
 <script>
 const POSTS=[
- {id:"live1",img:"covers/live1.jpg",date:"14 sep",fmt:"Foto",pillar:"La casa · Storytelling",
-  hk:"Bastida Pilates llega a Jerez de la Frontera.",live:"https://www.instagram.com/p/DdRTOexKU7L/"},
- {id:"live2",img:"covers/live2.jpg",date:"14 sep",fmt:"Carrusel",pillar:"Prueba social",
-  hk:"Únete al equipo — buscamos instructores.",live:"https://www.instagram.com/p/DdRVK8lCpuT/"},
- {id:"live3",img:"covers/live3.jpg",date:"14 sep",fmt:"Foto",pillar:"Prueba social · Educativo",
-  hk:"Algo nuevo está llegando a Jerez ✨ Qué es Mat Sculpt.",live:"https://www.instagram.com/p/DdRVgpHKK19/"},
- {id:"p2",n:"2",date:"Próxima",fmt:"Reel",pillar:"La casa · ASMR",
-  hk:"La cuenta atrás.",nt:"Pulsa para ver el reel — cuenta atrás ASMR.",video:"video/countdown.mp4",
-  alt:0,alts:[{label:"Original",img:"covers/p2.jpg"},{label:"Con color",img:"covers/p2-graded.jpg"}]},
- {id:"p3",n:"3",img:"covers/p3.jpg",date:"Próxima",fmt:"Reel",pillar:"La casa · Storytelling",
-  hk:"Something is coming soon to Jerez.",nt:"El teaser. Sin fecha, sin precio, sin producto. 6 s.",
+ {id:"live1",n:"",img:"covers/live1.jpg",date:"14 Sep",fmt:"Photo",pillar:"La casa",sub:"Storytelling",
+  goal:"Reach",ad:"no",adwhy:"Already published organically.",
+  es:"Bastida Pilates llega a Jerez de la Frontera.\n\nNace de una convicción sencilla: que el movimiento puede ser bello.",
+  en:"Bastida Pilates is coming to Jerez de la Frontera.\n\nBorn from one simple belief: that movement can be beautiful.",
+  live:"https://www.instagram.com/p/DdRTOexKU7L/"},
+ {id:"live2",n:"",img:"covers/live2.jpg",date:"14 Sep",fmt:"Carousel",pillar:"Prueba social",sub:"Formación",
+  goal:"Conversion",ad:"yes",adwhy:"Bloomies ran their hiring carousel as a paid burst. It hires and it tells the city something real is coming.",
+  es:"ÚNETE AL EQUIPO\n\nBuscamos instructores de Reformer, Barre y Mat con formación y experiencia, que prioricen conectar con las personas.",
+  en:"JOIN THE TEAM\n\nWe're looking for Reformer, Barre and Mat instructors — trained, experienced, and who put connection first.",
+  live:"https://www.instagram.com/p/DdRVK8lCpuT/"},
+ {id:"live3",n:"",img:"covers/live3.jpg",date:"14 Sep",fmt:"Photo",pillar:"Prueba social",sub:"Educativo",
+  goal:"Reach",ad:"yes",adwhy:"Educational content is the worst organic performer at every studio measured — but Bloomies paid to teach Málaga what Hot Pilates was before opening. Buy this reach, don't expect it.",
+  es:"Algo nuevo está llegando a Jerez ✨\n\nMAT SCULPT combina la precisión del Pilates con un trabajo más intenso de fuerza y tonificación.",
+  en:"Something new is coming to Jerez ✨\n\nMAT SCULPT combines the precision of Pilates with deeper strength and toning work.",
+  live:"https://www.instagram.com/p/DdRVgpHKK19/"},
+ {id:"p2",n:"2",date:"Next",fmt:"Reel",pillar:"La casa",sub:"ASMR",
+  goal:"Reach",ad:"no",adwhy:"Atmosphere travels on its own. Paying for reach you'd get free is waste.",
+  es:"La cuenta atrás ha empezado.",
+  en:"The countdown has started.",
+  video:"video/countdown.mp4",
+  alt:0,alts:[{label:"Original",img:"covers/p2.jpg"},{label:"Colour graded",img:"covers/p2-graded.jpg"}]},
+ {id:"p3",n:"3",img:"covers/p3.jpg",date:"Next",fmt:"Reel",pillar:"La casa",sub:"Storytelling",
+  goal:"Reach",ad:"yes",adwhy:"The single best-evidenced ad in the plan. Bloomies' first ever ad was their teaser — and they re-ran it in SIX separate waves up to 29 Jan. No date, no price, no product.",
+  es:"Algo está llegando a Jerez.",
+  en:"Something is coming soon to Jerez.",
   video:"video/comingsoon.mp4"},
- {id:"p4",n:"4",date:"Próxima",fmt:"Foto",pillar:"La casa · Storytelling",
-  hk:"Reformer en Jerez.",nt:"Pendiente: sustituir por reel.",
-  alt:0,alts:[{label:"Clara",img:"covers/p4.jpg"},{label:"Oscura",img:"covers/p4-dark.jpg"}]},
- {id:"p5",n:"5",img:"covers/p5-nologo.jpg",date:"Próxima",fmt:"Foto",pillar:"La casa · ASMR",
-  hk:"Descanso.",nt:"Pendiente: falta la versión con logo para comparar."},
- {id:"p6",n:"6",img:"covers/p6.jpg",date:"Próxima",fmt:"Foto",pillar:"La casa · ASMR",
-  hk:"La luz de las once.",nt:""},
- {id:"p7",n:"7",img:"covers/p7.jpg",date:"Próxima",fmt:"Foto",pillar:"La casa · Storytelling",
-  hk:"Barre, de verdad.",nt:""}
+ {id:"p4",n:"4",date:"Next",fmt:"Photo",pillar:"La casa",sub:"Storytelling",
+  goal:"Reach",ad:"test",adwhy:"Worth a 1–2 day test. Barrefit killed a creative after 23 hours — short tests are normal and cheap.",
+  es:"Reformer en Jerez.\n\nSe viene algo muy especial.",
+  en:"Reformer in Jerez.\n\nSomething very special is coming.",
+  alt:0,alts:[{label:"Lighter",img:"covers/p4.jpg"},{label:"Darker",img:"covers/p4-dark.jpg"}]},
+ {id:"p5",n:"5",date:"Next",fmt:"Photo",pillar:"La casa",sub:"ASMR",
+  goal:"Reach",ad:"no",adwhy:"Pure atmosphere. Keep it organic.",
+  es:"Descansar también es entrenar.",
+  en:"Rest is part of the work.",
+  alt:0,alts:[{label:"No logo",img:"covers/p5-nologo.jpg"},{label:"With logo",img:"covers/p5-logo.jpg"}]},
+ {id:"p6",n:"6",img:"covers/p6.jpg",date:"Next",fmt:"Photo",pillar:"La casa",sub:"ASMR",
+  goal:"Reach",ad:"no",adwhy:"Atmosphere. Organic.",
+  es:"La luz de las once.",
+  en:"Eleven o'clock light."},
+ {id:"p7",n:"7",img:"covers/p7.jpg",date:"Next",fmt:"Photo",pillar:"La casa",sub:"Storytelling",
+  goal:"Reach",ad:"no",adwhy:"Atmosphere. Organic.",
+  es:"Barre, de verdad.",
+  en:"Barre, properly."}
 ];
 const ICON={Reel:"▶",Carrusel:"❏",Foto:"▢"};
 const KEY="bastida.feed.v1";
 const BY={}; POSTS.forEach(p=>BY[p.id]=p);
-const src=p=>p.alts?p.alts[p.alt].img:p.img;
+const src=p=>p.alts?(p.alts[p.alt]||p.alts[0]).img:p.img;
 
 let order=POSTS.map(p=>p.id);
 try{const s=JSON.parse(localStorage.getItem(KEY)||"null");
   if(s){ if(Array.isArray(s.order)){const k=s.order.filter(i=>BY[i]);POSTS.forEach(p=>{if(!k.includes(p.id))k.push(p.id)});order=k}
-         if(s.p4alt!=null) BY.p4.alt=s.p4alt; }
+         if(s.alts) Object.entries(s.alts).forEach(([k,v])=>{ if(BY[k]&&BY[k].alts&&BY[k].alts[v]) BY[k].alt=v; }); }
 }catch(e){}
-function save(){try{localStorage.setItem(KEY,JSON.stringify({order,p4alt:BY.p4.alt}))}catch(e){}}
+function save(){try{const alts={};POSTS.forEach(q=>{if(q.alts)alts[q.id]=q.alt});localStorage.setItem(KEY,JSON.stringify({order,alts}))}catch(e){}}
 
-const grid=document.getElementById("grid"), list=document.getElementById("list");
+const grid=document.getElementById("grid"), detail=document.getElementById("detail");
+let current=null;
 
 function render(){
   grid.innerHTML=[...order].reverse().map(id=>{const p=BY[id];
-    return `<button class="t" data-id="${id}" aria-label="${p.hk.replace(/"/g,'&quot;')}">
+    return `<button class="t" data-id="${id}" aria-label="${p.en.replace(/"/g,'&quot;')}">
       <img src="${src(p)}" alt="" draggable="false">
       <span class="ic">${ICON[p.fmt]||""}</span>
       ${p.video?'<span class="play"><span>▶</span></span>':""}
     </button>`}).join("");
-  list.innerHTML=order.map(id=>{const p=BY[id];
-    return `<div class="row" data-id="${id}">
-      <div class="no">${p.n||"·"}</div>
-      <div>
-        <div class="meta"><b>${p.date}</b><span>${p.fmt}</span><span>${p.pillar}</span>${p.live?'<span class="live">· publicado</span>':""}</div>
-        <p class="hk">${p.hk}</p>
-        ${p.nt?`<p class="nt">${p.nt}</p>`:""}
-        ${p.live?`<p class="nt"><a href="${p.live}" target="_blank" rel="noopener" style="color:var(--clay)">Ver en Instagram →</a></p>`:""}
-        ${p.alts?`<div class="ab"><div class="lab">Elige una versión de esta publicación</div><div class="opts">${
-          p.alts.map((a,i)=>`<button data-alt="${i}" data-for="${p.id}" aria-pressed="${p.alt===i}">
-            <figure><img src="${a.img}" alt=""></figure>
-            <span class="cap"><i></i>${a.label}</span></button>`).join("")}</div></div>`:""}
-      </div></div>`}).join("");
   document.getElementById("np").textContent=POSTS.length;
 }
 render();
 
 /* A/B choice — updates the grid so you see it in context */
-list.addEventListener("click",e=>{
+detail.addEventListener("click",e=>{
   const b=e.target.closest("[data-alt]"); if(!b)return;
-  BY[b.dataset.for].alt=+b.dataset.alt; save(); render(); select(b.dataset.for);
+  BY[b.dataset.for].alt=+b.dataset.alt; save(); render(); showPost(b.dataset.for);
   toast(BY[b.dataset.for].alts[+b.dataset.alt].label+" aplicada al feed");
 });
 
@@ -241,9 +261,9 @@ grid.addEventListener("pointerup",e=>{
   const el=document.elementFromPoint(e.clientX,e.clientY), over=el&&el.closest(".t");
   if(moved&&over&&over.dataset.id!==dragId){
     const from=order.indexOf(dragId), to=order.indexOf(over.dataset.id);
-    order.splice(to,0,order.splice(from,1)[0]); save(); render(); select(dragId);
+    order.splice(to,0,order.splice(from,1)[0]); save(); render(); showPost(dragId);
   }else if(!moved){
-    const p=BY[dragId]; select(dragId); if(p.video) openVid(p.video);
+    const p=BY[dragId]; showPost(dragId); if(p.video) openVid(p.video);
   }
   dragId=null; moved=false;
   grid.querySelectorAll(".drag,.over").forEach(n=>n.classList.remove("drag","over"));
@@ -251,22 +271,49 @@ grid.addEventListener("pointerup",e=>{
 grid.addEventListener("pointercancel",()=>{dragId=null;moved=false;
   grid.querySelectorAll(".drag,.over").forEach(n=>n.classList.remove("drag","over"))});
 
-function select(id){
+const AD={yes:["Yes — run it",  "y"],
+          test:["Test it first","t"],
+          no:  ["No — organic", "n"]};
+function showPost(id){
+  current=id; const p=BY[id];
   document.querySelectorAll(".t").forEach(n=>n.classList.toggle("sel",n.dataset.id===id));
-  document.querySelectorAll(".row").forEach(n=>n.classList.toggle("on",n.dataset.id===id));
+  const ad=AD[p.ad]||AD.no;
+  detail.innerHTML=`
+    <p class="num">${p.n||"·"}</p>
+    <p class="when">${p.date} · ${p.live?"Published":"Scheduled"}</p>
+    <h2>${p.en}</h2>
+    <dl class="facts">
+      <div><dt>Format</dt><dd>${p.fmt}</dd></div>
+      <div><dt>Content pillar</dt><dd>${p.pillar}<br><span style="color:var(--dim);font-weight:400">${p.sub}</span></dd></div>
+      <div><dt>Optimised for</dt><dd>${p.goal}</dd></div>
+      <div><dt>Run as an ad?</dt><dd class="${ad[1]}">${ad[0]}</dd></div>
+    </dl>
+    <div class="cap">
+      <div class="lang">Caption · Español</div>
+      <p>${p.es}</p>
+      <div class="lang">English</div>
+      <p class="en">${p.en}</p>
+    </div>
+    <p class="why"><b>Why.</b> ${p.adwhy}</p>
+    ${p.alts?`<div class="ab"><div class="lab">Choose a version</div><div class="opts">${
+      p.alts.map((a,i)=>`<button data-alt="${i}" data-for="${p.id}" aria-pressed="${p.alt===i}">
+        <figure><img src="${a.img}" alt=""></figure>
+        <span class="cap2"><i></i>${a.label}</span></button>`).join("")}</div></div>`:""}
+    ${p.live?`<p style="margin:16px 0 0"><a class="igl" href="${p.live}" target="_blank" rel="noopener">View on Instagram →</a></p>`:""}
+    ${p.video?`<p style="margin:16px 0 0;font-size:12.5px;color:var(--dim)">Tap the tile to play the reel.</p>`:""}`;
 }
 
 /* share the arrangement back */
 document.getElementById("copy").onclick=()=>{
   const txt="Orden del feed (el último es el más reciente):\n"+
-    order.map((id,i)=>`${i+1}. ${BY[id].hk}`).join("\n")+
+    order.map((id,i)=>`${i+1}. ${BY[id].en}`).join("\n")+
     `\n\nPortada de Reformer: ${BY.p4.alts[BY.p4.alt].label}`;
   navigator.clipboard.writeText(txt).then(()=>toast("Orden copiado"))
    .catch(()=>{const t=document.createElement("textarea");t.value=txt;document.body.appendChild(t);
      t.select();try{document.execCommand("copy");toast("Orden copiado")}catch(e){toast("No se pudo copiar")}t.remove()});
 };
 document.getElementById("reset").onclick=()=>{
-  order=POSTS.map(p=>p.id); BY.p4.alt=0; save(); render(); toast("Orden original restaurado");
+  order=POSTS.map(p=>p.id); POSTS.forEach(q=>{if(q.alts)q.alt=0}); save(); render(); toast("Orden original restaurado");
 };
 
 const lb=document.getElementById("lb"), vid=document.getElementById("vid");
@@ -279,6 +326,7 @@ addEventListener("keydown",e=>{if(e.key==="Escape")closeVid()});
 let tid; const tEl=document.getElementById("toast");
 function toast(m){tEl.textContent=m;tEl.classList.add("on");clearTimeout(tid);
   tid=setTimeout(()=>tEl.classList.remove("on"),2000)}
+showPost(order[order.length-1]);
 </script>
 </body>
 </html>
