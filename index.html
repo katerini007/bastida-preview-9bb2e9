@@ -78,6 +78,9 @@ body{background:var(--tint);color:var(--fg);font-family:var(--fb);font-size:14px
 .why{border-top:1px solid var(--hair);padding-top:14px;font-size:12.5px;color:var(--dim);line-height:1.6;margin:0 0 16px}
 .why b{color:var(--fg);font-weight:500}
 .igl{font-size:12.5px;color:var(--clay);text-decoration:none}
+.danger{font:inherit;font-size:11px;letter-spacing:.09em;text-transform:uppercase;background:none;
+  border:0;border-bottom:1px solid var(--hair);color:#A4553F;cursor:pointer;padding:2px 0}
+.danger:hover{border-bottom-color:#A4553F}
 .empty{color:var(--dim);font-size:14px}
 .eyebrow{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin:0 0 10px}
 h1{font-family:var(--fd);font-weight:400;font-size:clamp(30px,4.6vw,42px);line-height:1.06;margin:0 0 .4em}
@@ -144,7 +147,8 @@ h1{font-family:var(--fd);font-weight:400;font-size:clamp(30px,4.6vw,42px);line-h
     <div class="grid" id="grid"></div>
     <div class="tools">
       <span class="hint">Drag to reorder · tap a post for its detail</span>
-      <button id="copy">Copy order</button>
+      <button id="copy">Copy link to this version</button>
+      <button id="restore">Restore all</button>
       <button id="reset">Reset</button>
     </div>
   </div>
@@ -214,28 +218,41 @@ const BY={}; POSTS.forEach(p=>BY[p.id]=p);
 const src=p=>p.alts?(p.alts[p.alt]||p.alts[0]).img:p.img;
 
 let order=POSTS.map(p=>p.id);
-try{const s=JSON.parse(localStorage.getItem(KEY)||"null");
-  if(s){ if(Array.isArray(s.order)){const k=s.order.filter(i=>BY[i]);POSTS.forEach(p=>{if(!k.includes(p.id))k.push(p.id)});order=k}
-         if(s.alts) Object.entries(s.alts).forEach(([k,v])=>{ if(BY[k]&&BY[k].alts&&BY[k].alts[v]) BY[k].alt=v; }); }
-}catch(e){}
-function save(){try{const alts={};POSTS.forEach(q=>{if(q.alts)alts[q.id]=q.alt});localStorage.setItem(KEY,JSON.stringify({order,alts}))}catch(e){}}
+let hidden=[];
+function fromHash(){try{const m=location.hash.match(/s=([A-Za-z0-9\-_]+)/);if(!m)return null;
+  return JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g,"+").replace(/_/g,"/")))))}catch(e){return null}}
+function toHash(){const s=JSON.stringify(state());
+  return "#s="+btoa(unescape(encodeURIComponent(s))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
+const shown=()=>order.filter(i=>!hidden.includes(i));
+function state(){const alts={};POSTS.forEach(q=>{if(q.alts)alts[q.id]=q.alt});return{order,alts,hidden}}
+function apply(s){ if(!s)return;
+  if(Array.isArray(s.order)){const k=s.order.filter(i=>BY[i]);POSTS.forEach(q=>{if(!k.includes(q.id))k.push(q.id)});order=k}
+  if(s.alts) Object.entries(s.alts).forEach(([k,v])=>{if(BY[k]&&BY[k].alts&&BY[k].alts[v])BY[k].alt=v});
+  if(Array.isArray(s.hidden)) hidden=s.hidden.filter(i=>BY[i]); }
+apply(fromHash());
+if(!fromHash()){try{apply(JSON.parse(localStorage.getItem(KEY)||"null"))}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state()))}catch(e){}}
 
 const grid=document.getElementById("grid"), detail=document.getElementById("detail");
 let current=null;
 
 function render(){
-  grid.innerHTML=[...order].reverse().map(id=>{const p=BY[id];
+  grid.innerHTML=[...shown()].reverse().map(id=>{const p=BY[id];
     return `<button class="t" data-id="${id}" aria-label="${p.en.replace(/"/g,'&quot;')}">
       <img src="${src(p)}" alt="" draggable="false">
       <span class="ic">${ICON[p.fmt]||""}</span>
       ${p.video?'<span class="play"><span>▶</span></span>':""}
     </button>`}).join("");
-  document.getElementById("np").textContent=POSTS.length;
+  document.getElementById("np").textContent=order.filter(i=>!hidden.includes(i)).length;
 }
 render();
 
 /* A/B choice — updates the grid so you see it in context */
 detail.addEventListener("click",e=>{
+  const rm=e.target.closest("[data-remove]");
+  if(rm){ const id=rm.dataset.remove; if(!hidden.includes(id))hidden.push(id);
+    save(); render(); const left=shown(); showPost(left[left.length-1]||null);
+    toast("Post removed — use Restore all to bring it back"); return; }
   const b=e.target.closest("[data-alt]"); if(!b)return;
   BY[b.dataset.for].alt=+b.dataset.alt; save(); render(); showPost(b.dataset.for);
   toast(BY[b.dataset.for].alts[+b.dataset.alt].label+" aplicada al feed");
@@ -275,6 +292,7 @@ const AD={yes:["Yes — run it",  "y"],
           test:["Test it first","t"],
           no:  ["No — organic", "n"]};
 function showPost(id){
+  if(!id){detail.innerHTML='<p class="empty">No posts in the feed. Use Restore all.</p>';return}
   current=id; const p=BY[id];
   document.querySelectorAll(".t").forEach(n=>n.classList.toggle("sel",n.dataset.id===id));
   const ad=AD[p.ad]||AD.no;
@@ -300,20 +318,24 @@ function showPost(id){
         <figure><img src="${a.img}" alt=""></figure>
         <span class="cap2"><i></i>${a.label}</span></button>`).join("")}</div></div>`:""}
     ${p.live?`<p style="margin:16px 0 0"><a class="igl" href="${p.live}" target="_blank" rel="noopener">View on Instagram →</a></p>`:""}
-    ${p.video?`<p style="margin:16px 0 0;font-size:12.5px;color:var(--dim)">Tap the tile to play the reel.</p>`:""}`;
+    ${p.video?`<p style="margin:16px 0 0;font-size:12.5px;color:var(--dim)">Tap the tile to play the reel.</p>`:""}
+    <p style="margin:22px 0 0;border-top:1px solid var(--hair);padding-top:14px">
+      <button class="danger" data-remove="${p.id}">Remove this post from the feed</button></p>`;
 }
 
 /* share the arrangement back */
+document.getElementById("restore").onclick=()=>{hidden=[];save();render();toast("All posts restored")};
 document.getElementById("copy").onclick=()=>{
-  const txt="Orden del feed (el último es el más reciente):\n"+
-    order.map((id,i)=>`${i+1}. ${BY[id].en}`).join("\n")+
+  const url=location.origin+location.pathname+toHash();
+  const txt=url+"\n\nFeed order (last = most recent):\n"+
+    shown().map((id,i)=>`${i+1}. ${BY[id].en.split("\n")[0]}`).join("\n")+
     `\n\nPortada de Reformer: ${BY.p4.alts[BY.p4.alt].label}`;
-  navigator.clipboard.writeText(txt).then(()=>toast("Orden copiado"))
+  navigator.clipboard.writeText(txt).then(()=>{history.replaceState(null,"",toHash());toast("Link copied — open it anywhere")})
    .catch(()=>{const t=document.createElement("textarea");t.value=txt;document.body.appendChild(t);
-     t.select();try{document.execCommand("copy");toast("Orden copiado")}catch(e){toast("No se pudo copiar")}t.remove()});
+     t.select();try{document.execCommand("copy");toast("Link copied")}catch(e){toast("Could not copy")}t.remove()});
 };
 document.getElementById("reset").onclick=()=>{
-  order=POSTS.map(p=>p.id); POSTS.forEach(q=>{if(q.alts)q.alt=0}); save(); render(); toast("Orden original restaurado");
+  order=POSTS.map(p=>p.id); hidden=[]; POSTS.forEach(q=>{if(q.alts)q.alt=0}); save(); history.replaceState(null,'',location.pathname); render(); showPost(order[order.length-1]); toast('Reset to the original');
 };
 
 const lb=document.getElementById("lb"), vid=document.getElementById("vid");
@@ -326,7 +348,7 @@ addEventListener("keydown",e=>{if(e.key==="Escape")closeVid()});
 let tid; const tEl=document.getElementById("toast");
 function toast(m){tEl.textContent=m;tEl.classList.add("on");clearTimeout(tid);
   tid=setTimeout(()=>tEl.classList.remove("on"),2000)}
-showPost(order[order.length-1]);
+showPost(shown()[shown().length-1]);
 </script>
 </body>
 </html>
