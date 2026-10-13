@@ -15,10 +15,34 @@
   --fb:"Inter",-apple-system,"Segoe UI",system-ui,sans-serif;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{margin:0}
 body{background:var(--tint);color:var(--fg);font-family:var(--fb);font-size:14px;
   line-height:1.55;-webkit-font-smoothing:antialiased}
-.wrap{max-width:1040px;margin:0 auto;padding:44px 20px 72px;display:grid;gap:40px;grid-template-columns:1fr}
+.tabbar{max-width:1040px;margin:0 auto;padding:30px 20px 0;display:flex;gap:26px}
+.tabbar button{font:inherit;font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  background:none;border:0;border-bottom:1px solid transparent;color:var(--dim);cursor:pointer;padding:0 0 7px}
+.tabbar button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--fg)}
+.wrap{max-width:1040px;margin:0 auto;padding:24px 20px 72px;display:grid;gap:40px;grid-template-columns:1fr}
+.wrap.cal{grid-template-columns:1fr}
+.calhead{margin:0 0 26px}
+.calhead h1{margin:0 0 .3em}
+.wklab{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);
+  padding:16px 0 8px;border-top:1px solid var(--hair)}
+.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
+@media(max-width:820px){.days{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.day{background:var(--bg);border:1px solid var(--hair);padding:9px 10px 11px;min-height:104px}
+.day.off{background:transparent;border-style:dashed;opacity:.5}
+.day .d{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:7px}
+.day .d b{color:var(--fg);font-weight:500}
+.day .slot{font-size:12px;line-height:1.35;font-weight:500}
+.day .fmt{font-size:10.5px;color:var(--dim);margin-top:4px;line-height:1.35}
+.day .pill{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:1px}
+.day.today{outline:2px solid var(--clay);outline-offset:-1px}
+.callegend{display:flex;flex-wrap:wrap;gap:9px 18px;margin:26px 0 0;font-size:12px;color:var(--dim)}
+.callegend b{color:var(--fg);font-weight:500}
+.calnote{margin:22px 0 0;font-size:12.5px;color:var(--dim);line-height:1.65;max-width:72ch;
+  border-top:1px solid var(--hair);padding-top:16px}
 @media(min-width:880px){.wrap{grid-template-columns:minmax(0,430px) minmax(0,1fr);align-items:start;gap:56px}}
 
 .phone{background:var(--bg);border:1px solid var(--hair);border-radius:16px;overflow:hidden}
@@ -39,7 +63,7 @@ body{background:var(--tint);color:var(--fg);font-family:var(--fb);font-size:14px
   font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);padding:12px 0 11px}
 .tabs i{font-style:normal;border-top:1px solid var(--fg);color:var(--fg);margin-top:-13px;padding-top:12px}
 
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--hair);padding:2px;touch-action:none}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--bg);padding:2px;touch-action:none}
 .t{position:relative;aspect-ratio:4/5;border:0;padding:0;margin:0;overflow:hidden;background:var(--tint);
   cursor:grab;display:block;width:100%}
 .t img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity .3s ease}
@@ -60,6 +84,16 @@ body{background:var(--tint);color:var(--fg);font-family:var(--fb);font-size:14px
   border:0;border-bottom:1px solid var(--hair);color:var(--clay);cursor:pointer;padding:2px 0}
 .tools button:hover{border-bottom-color:var(--clay)}
 .tools .hint{flex:1;min-width:120px;text-transform:none;letter-spacing:0;font-size:11.5px}
+#versions:empty{display:none}
+#versions{border-top:1px solid var(--hair);padding:12px 18px 0}
+#versions .vh{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.v{display:flex;align-items:baseline;gap:10px;padding:6px 0;border-bottom:1px solid var(--hair)}
+.v:last-child{border-bottom:0}
+.v .nm{flex:1;min-width:0;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.v .ts{font-size:10.5px;color:var(--dim);white-space:nowrap}
+.v button{font:inherit;font-size:10px;letter-spacing:.09em;text-transform:uppercase;background:none;
+  border:0;border-bottom:1px solid var(--hair);color:var(--clay);cursor:pointer;padding:1px 0}
+.v button.del{color:#A4553F}
 
 .side{min-width:0;display:grid;gap:18px;position:sticky;top:44px}
 #detail .num{font-family:var(--fd);font-size:46px;line-height:.85;color:var(--clay);margin:0 0 2px}
@@ -83,6 +117,8 @@ body{background:var(--tint);color:var(--fg);font-family:var(--fb);font-size:14px
 .danger:hover{border-bottom-color:#A4553F}
 .empty{color:var(--dim);font-size:14px}
 .act{border:1px solid var(--clay);background:#FBF6EC;padding:13px 15px;margin:0 0 16px}
+.act.warn{border-color:#C08A6E;background:#FBF1EC}
+.act.warn .actlab{color:#A4553F}
 .actlab{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--clay);margin-bottom:5px}
 .act p{margin:0;font-size:13px;line-height:1.55}
 .scr{border-top:1px solid var(--hair);padding:12px 0 0;margin:0 0 10px}
@@ -132,7 +168,11 @@ h1{font-family:var(--fd);font-weight:400;font-size:clamp(30px,4.6vw,42px);line-h
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="tabbar">
+  <button id="tabFeed" aria-selected="true">Feed</button>
+  <button id="tabCal" aria-selected="false">Calendar</button>
+</div>
+<div class="wrap" id="viewFeed">
 
   <div class="phone">
     <div class="bar"><span class="dot"></span>bastidapilates</div>
@@ -155,10 +195,12 @@ h1{font-family:var(--fd);font-weight:400;font-size:clamp(30px,4.6vw,42px);line-h
     </div>
     <div class="tabs"><i>Publicaciones</i></div>
     <div class="grid" id="grid"></div>
+    <div id="versions"></div>
     <div class="tools">
       <span class="hint">Drag to reorder · tap a post for its detail</span>
       <button id="copy">Copy link to this version</button>
       <button id="restore">Restore all</button>
+      <button id="savev">Save version</button>
       <button id="reset">Reset</button>
     </div>
   </div>
@@ -168,6 +210,8 @@ h1{font-family:var(--fd);font-weight:400;font-size:clamp(30px,4.6vw,42px);line-h
     <div id="detail"></div>
   </div>
 </div>
+
+<div class="wrap cal" id="viewCal" hidden><div id="calbody"></div></div>
 
 <div class="lb" id="lb">
   <button class="x" id="x" aria-label="Cerrar">×</button>
@@ -200,8 +244,9 @@ const POSTS=[
   alt:0,alts:[{label:"Original",img:"covers/p2.jpg"},{label:"Colour graded",img:"covers/p2-graded.jpg"}]},
  {id:"p3",n:"3",img:"covers/p3.jpg",date:"Next",fmt:"Reel",pillar:"La casa",sub:"Storytelling",
   goal:"Reach",ad:"yes",adwhy:"The single best-evidenced ad in the plan. Bloomies' first ever ad was their teaser — and they re-ran it in SIX separate waves up to 29 Jan. No date, no price, no product.",
-  es:"Algo está llegando a Jerez.",
-  en:"Something is coming soon to Jerez.",
+  title:"Something is coming soon to Jerez.",
+  es:"Síguenos para no perderte la aventura.\n\nAquí no solo encontrarás pilates y barre. Estamos creando una comunidad.\n\nApúntate a la lista de espera en la bio y entérate antes que nadie de todo lo que llega este invierno.",
+  en:"Follow along so you don't miss the adventure.\n\nThis isn't only pilates and barre. We're building a community.\n\nJoin the waitlist in our bio to hear first about everything coming this winter — before we open.",
   video:"video/comingsoon.mp4"},
  {id:"p4",n:"4",date:"Next",fmt:"Photo",pillar:"La casa",sub:"Storytelling",
   goal:"Reach",ad:"test",adwhy:"Worth a 1–2 day test. Barrefit killed a creative after 23 hours — short tests are normal and cheap.",
@@ -212,6 +257,7 @@ const POSTS=[
   goal:"Reach",ad:"no",adwhy:"Pure atmosphere. Keep it organic.",
   es:"Descansar también es entrenar.",
   en:"Rest is part of the work.",
+  warn:"This is the same photograph as the published 14 Sep post. Re-posting it means the image appears twice in the grid.",
   alt:0,alts:[{label:"No logo",img:"covers/p5-nologo.jpg"},{label:"With logo",img:"covers/p5-logo.jpg"}]},
  {id:"p6",n:"6",img:"covers/p6.jpg",date:"Next",fmt:"Reel",pillar:"La casa",sub:"Storytelling",
   goal:"Reach",ad:"test",adwhy:"The founder story is the one thing no competitor in Jerez can copy. Worth a short paid test once it is cut.",
@@ -313,7 +359,7 @@ function showPost(id){
   detail.innerHTML=`
     <p class="num">${p.n||"·"}</p>
     <p class="when">${p.date} · ${p.live?"Published":"Scheduled"}</p>
-    <h2>${p.en}</h2>
+    <h2>${p.title||p.en.split("\n")[0]}</h2>
     <dl class="facts">
       <div><dt>Format</dt><dd>${p.fmt}${p.cover?`<br><span style="color:var(--dim);font-weight:400;font-size:11.5px">cover only</span>`:""}</dd></div>
       <div><dt>Content pillar</dt><dd>${p.pillar}<br><span style="color:var(--dim);font-weight:400">${p.sub}</span></dd></div>
@@ -327,6 +373,7 @@ function showPost(id){
       <p class="en">${p.en}</p>
     </div>
     <p class="why"><b>Why.</b> ${p.adwhy}</p>
+    ${p.warn?`<div class="act warn"><div class="actlab">⚠︎ Careful</div><p>${p.warn}</p></div>`:""}
     ${p.action?`<div class="act"><div class="actlab">🎬 To record</div><p>${p.action}</p></div>`:""}
     ${p.scriptEs?`<details class="scr" open><summary>Script — Español</summary><p>${p.scriptEs}</p></details>`:""}
     ${p.scriptEn?`<details class="scr"><summary>Script — English</summary><p>${p.scriptEn}</p></details>`:""}
@@ -341,6 +388,24 @@ function showPost(id){
 }
 
 /* share the arrangement back */
+const VKEY="bastida.feed.versions.v1";
+const getV=()=>{try{return JSON.parse(localStorage.getItem(VKEY)||"[]")}catch(e){return[]}};
+const setV=v=>{try{localStorage.setItem(VKEY,JSON.stringify(v))}catch(e){}};
+function drawV(){const v=getV(),el=document.getElementById("versions");
+  if(!v.length){el.innerHTML="";return}
+  el.innerHTML='<div class="vh">Saved versions</div>'+v.map((x,i)=>
+    `<div class="v"><span class="nm">${x.name}</span><span class="ts">${x.ts}</span>`+
+    `<button data-rest="${i}">Restore</button><button class="del" data-del="${i}">×</button></div>`).join("");}
+document.getElementById("versions").addEventListener("click",e=>{
+  const r=e.target.closest("[data-rest]"), d=e.target.closest("[data-del]");
+  if(r){const v=getV()[+r.dataset.rest]; if(v){apply(v.s);save();render();
+        const l=shown();showPost(l[l.length-1]||null);toast("Restored “"+v.name+"”")} return}
+  if(d){const v=getV();const n=v[+d.dataset.del].name;v.splice(+d.dataset.del,1);setV(v);drawV();toast("Deleted “"+n+"”")}});
+document.getElementById("savev").onclick=()=>{
+  const name=(window.prompt("Name this version","Version "+(getV().length+1))||"").trim();
+  if(!name)return;
+  const v=getV(); v.unshift({name,ts:new Date().toLocaleDateString("en-GB",{day:"numeric",month:"short"}),s:state()});
+  setV(v.slice(0,20)); drawV(); toast("Saved “"+name+"”")};
 document.getElementById("restore").onclick=()=>{hidden=[];save();render();toast("All posts restored")};
 document.getElementById("copy").onclick=()=>{
   const url=location.origin+location.pathname+toHash();
@@ -365,6 +430,63 @@ addEventListener("keydown",e=>{if(e.key==="Escape")closeVid()});
 let tid; const tEl=document.getElementById("toast");
 function toast(m){tEl.textContent=m;tEl.classList.add("on");clearTimeout(tid);
   tid=setTimeout(()=>tEl.classList.remove("on"),2000)}
+
+/* ---------------- calendar ---------------- */
+const CAL={
+  build :{t:"Build with us",              f:"Reel 15–30s · carrusel · storytelling", c:"#879071"},
+  casa  :{t:"ASMR ↔ ¿Y si lo prueba…? · Trends", f:"Reel 30–60s",                    c:"#A6825F"},
+  social:{t:"Prueba social",              f:"Carrusel · post · reel",                c:"#9A8092"},
+  edu   :{t:"Educativo",                  f:"Carrusel · post · reel",                c:"#8C877F"},
+  sat   :{t:"Event promo / dónde estamos",f:"Qué viene y dónde",                     c:"#B4953F"},
+  sun   :{t:"English layer",              f:"Offers · events · retreats",            c:"#7E8C99"}
+};
+const DN=["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"];
+const MN=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+function slotFor(wd,friCount){
+  if(wd===0) return CAL.build;                       // lunes
+  if(wd===1) return CAL.casa;                        // martes (puede pasar a miércoles)
+  if(wd===4) return friCount%2===0?CAL.social:CAL.edu;  // viernes quincenal
+  if(wd===5) return CAL.sat;                         // sábado
+  if(wd===6) return CAL.sun;                         // domingo
+  return null;
+}
+function drawCal(){
+  const start=new Date(2026,9,12), end=new Date(2026,11,1), today=new Date();
+  let out="",fri=0;
+  out+='<div class="calhead"><p class="eyebrow">Bastida × Zero To Reel</p><h1>Calendar</h1>'+
+       '<p class="lede">12 October → 1 December. The weekly rhythm as slots to fill, not final posts.</p></div>';
+  let cur=new Date(start);
+  while(cur<=end){
+    out+='<div class="wklab">Semana del '+cur.getDate()+' '+MN[cur.getMonth()]+'</div><div class="days">';
+    for(let i=0;i<7;i++){
+      const d=new Date(cur); d.setDate(cur.getDate()+i);
+      const wd=(d.getDay()+6)%7, inR=d>=start&&d<=end;
+      let s=null;
+      if(inR){ s=slotFor(wd, wd===4?fri:fri); if(wd===4) fri++; }
+      const t=d.toDateString()===today.toDateString();
+      out+='<div class="day'+(s?"":" off")+(t?" today":"")+'">'+
+        '<div class="d">'+DN[wd]+' <b>'+d.getDate()+'</b> '+MN[d.getMonth()]+'</div>'+
+        (s?'<div class="slot"><span class="pill" style="background:'+s.c+'"></span>'+s.t+'</div><div class="fmt">'+s.f+'</div>'
+          :'<div class="fmt">'+(inR?"libre":"—")+'</div>')+'</div>';
+    }
+    out+='</div>';
+    cur.setDate(cur.getDate()+7);
+  }
+  out+='<div class="callegend">'+Object.values(CAL).map(v=>
+    '<span><span class="pill" style="background:'+v.c+'"></span><b>'+v.t+'</b></span>').join("")+'</div>';
+  out+='<p class="calnote"><b>Stories every other day</b>, 3–5 frames — not counted above. That is where the waitlist link, the polls and the raw phone footage live. Stories carry the relationship; the grid carries the reputation.<br><br>'+
+       '<b>Martes can move to miércoles</b> if that is when the footage exists. The unlikely-visitor post is a once-every-4–6-weeks event, so most weeks this slot is La casa — ASMR, trends, storytelling.<br><br>'+
+       '<b>Viernes runs fortnightly</b>, alternating Prueba social and Educativo.<br><br>'+
+       '<b>Sábado</b> carries event promo and where we are. <b>Domingo</b> is the English layer — offers, events, retreats — warming up the Rota audience.</p>';
+  document.getElementById("calbody").innerHTML=out;
+}
+const tF=document.getElementById("tabFeed"), tC=document.getElementById("tabCal");
+function tab(cal){ tF.setAttribute("aria-selected",!cal); tC.setAttribute("aria-selected",cal);
+  document.getElementById("viewFeed").hidden=cal; document.getElementById("viewCal").hidden=!cal;
+  if(cal) drawCal(); }
+tF.onclick=()=>tab(false); tC.onclick=()=>tab(true);
+
+drawV();
 showPost(shown()[shown().length-1]);
 </script>
 </body>
