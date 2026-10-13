@@ -82,6 +82,16 @@ body{background:var(--tint);color:var(--fg);font-family:var(--fb);font-size:14px
   border:0;border-bottom:1px solid var(--hair);color:#A4553F;cursor:pointer;padding:2px 0}
 .danger:hover{border-bottom-color:#A4553F}
 .empty{color:var(--dim);font-size:14px}
+.act{border:1px solid var(--clay);background:#FBF6EC;padding:13px 15px;margin:0 0 16px}
+.actlab{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--clay);margin-bottom:5px}
+.act p{margin:0;font-size:13px;line-height:1.55}
+.scr{border-top:1px solid var(--hair);padding:12px 0 0;margin:0 0 10px}
+.scr summary{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--clay);
+  cursor:pointer;list-style:none;margin-bottom:8px}
+.scr summary::-webkit-details-marker{display:none}
+.scr summary::before{content:"▸ ";font-size:9px}
+.scr[open] summary::before{content:"▾ "}
+.scr p{margin:0;white-space:pre-line;font-size:13.5px;line-height:1.72}
 .eyebrow{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin:0 0 10px}
 h1{font-family:var(--fd);font-weight:400;font-size:clamp(30px,4.6vw,42px);line-height:1.06;margin:0 0 .4em}
 .lede{color:var(--dim);margin:0;max-width:52ch;font-size:14.5px}
@@ -203,10 +213,14 @@ const POSTS=[
   es:"Descansar también es entrenar.",
   en:"Rest is part of the work.",
   alt:0,alts:[{label:"No logo",img:"covers/p5-nologo.jpg"},{label:"With logo",img:"covers/p5-logo.jpg"}]},
- {id:"p6",n:"6",img:"covers/p6.jpg",date:"Next",fmt:"Photo",pillar:"La casa",sub:"ASMR",
-  goal:"Reach",ad:"no",adwhy:"Atmosphere. Organic.",
-  es:"La luz de las once.",
-  en:"Eleven o'clock light."},
+ {id:"p6",n:"6",img:"covers/p6.jpg",date:"Next",fmt:"Reel",pillar:"La casa",sub:"Storytelling",
+  goal:"Reach",ad:"test",adwhy:"The founder story is the one thing no competitor in Jerez can copy. Worth a short paid test once it is cut.",
+  cover:"This image is the cover only — the post is a reel.",
+  action:"Jen — record the voiceover in Spanish AND in English. Both versions get used: Spanish is the main post (English subtitles optional), English is kept for a trial reel later.",
+  es:"Somos Bastida. Cada semana te contamos un poquito más.",
+  en:"We're Bastida. Every week, we'll show you a little more.",
+  scriptEs:"Este edificio era una discoteca. En tres meses, tiene que ser tu estudio de pilates favorito.\n\nSoy Jen, y con mi madre y mi hermana estamos creando un estudio de pilates y barre en Jerez.\n\nMi madre es interiorista y no se le escapa ni un detalle.\n\nYo soy la de la moda: si algo no te hace sentir guapa, no entra en Bastida.\n\nY Yas tiene dos niños, así que sabe lo difícil que es sacar un rato para una misma.\n\n¿Y lo que nos une a las tres? El pilates y cuidarnos.\n\nHay días que parece imposible llegar a tiempo… pero no vamos a abrir un estudio cualquiera.\n\nQueremos un sitio donde te sientas bien, ganes salud, desconectes y salgas con las pilas cargadas.\n\nSomos Bastida. Cada semana te contamos un poquito más. ¿Te vienes a construirlo con nosotras?",
+  scriptEn:"This building used to be a nightclub. In three months, it has to be your favourite Pilates studio.\n\nI'm Jen, and together with my mum and my sister, we're creating a Pilates and barre studio in Jerez.\n\nMy mum is an interior designer, and not a single detail gets past her.\n\nI'm the fashion one: if something doesn't make you feel beautiful, it doesn't go in Bastida.\n\nAnd Yas has two boys, so she knows how hard it is to find a moment for yourself.\n\nAnd what do all three of us share? Pilates, and taking care of ourselves.\n\nSome days it feels impossible to be ready in time… but we're not opening just any studio.\n\nWe want a place where you feel good, get healthier, switch off, and leave feeling recharged.\n\nWe're Bastida. Every week, we'll show you a little more. Want to build it with us?"},
  {id:"p7",n:"7",img:"covers/p7.jpg",date:"Next",fmt:"Photo",pillar:"La casa",sub:"Storytelling",
   goal:"Reach",ad:"no",adwhy:"Atmosphere. Organic.",
   es:"Barre, de verdad.",
@@ -301,7 +315,7 @@ function showPost(id){
     <p class="when">${p.date} · ${p.live?"Published":"Scheduled"}</p>
     <h2>${p.en}</h2>
     <dl class="facts">
-      <div><dt>Format</dt><dd>${p.fmt}</dd></div>
+      <div><dt>Format</dt><dd>${p.fmt}${p.cover?`<br><span style="color:var(--dim);font-weight:400;font-size:11.5px">cover only</span>`:""}</dd></div>
       <div><dt>Content pillar</dt><dd>${p.pillar}<br><span style="color:var(--dim);font-weight:400">${p.sub}</span></dd></div>
       <div><dt>Optimised for</dt><dd>${p.goal}</dd></div>
       <div><dt>Run as an ad?</dt><dd class="${ad[1]}">${ad[0]}</dd></div>
@@ -313,6 +327,9 @@ function showPost(id){
       <p class="en">${p.en}</p>
     </div>
     <p class="why"><b>Why.</b> ${p.adwhy}</p>
+    ${p.action?`<div class="act"><div class="actlab">🎬 To record</div><p>${p.action}</p></div>`:""}
+    ${p.scriptEs?`<details class="scr" open><summary>Script — Español</summary><p>${p.scriptEs}</p></details>`:""}
+    ${p.scriptEn?`<details class="scr"><summary>Script — English</summary><p>${p.scriptEn}</p></details>`:""}
     ${p.alts?`<div class="ab"><div class="lab">Choose a version</div><div class="opts">${
       p.alts.map((a,i)=>`<button data-alt="${i}" data-for="${p.id}" aria-pressed="${p.alt===i}">
         <figure><img src="${a.img}" alt=""></figure>
