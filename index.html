@@ -172,6 +172,40 @@ h1{font-family:var(--fd);font-weight:400;font-size:clamp(30px,4.6vw,42px);line-h
 .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--fg);color:var(--bg);
   padding:9px 16px;border-radius:40px;font-size:12px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:60}
 .toast.on{opacity:1}
+
+/* ---- uploader ---- */
+.upbox{margin:22px 0 0;border-top:1px solid var(--hair);padding-top:16px}
+.upbox .lab{font:600 10px/1 var(--fb);letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+.uprow{display:flex;gap:8px;flex-wrap:wrap}
+.upb{font:500 12.5px/1 var(--fb);color:var(--fg);background:var(--tint);border:1px solid var(--hair);
+  border-radius:999px;padding:9px 15px;cursor:pointer;transition:.15s}
+.upb:hover{background:#fff;border-color:var(--clay)}
+.upb.on{background:var(--clay);border-color:var(--clay);color:#fff}
+.upb[disabled]{opacity:.45;cursor:default}
+.upnote{font:400 11.5px/1.5 var(--fb);color:var(--dim);margin:9px 0 0}
+.fields{display:grid;gap:9px;margin:12px 0 0}
+.fields label{display:block;font:600 9.5px/1 var(--fb);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:5px}
+.fields input,.fields textarea,.fields select{width:100%;box-sizing:border-box;font:400 13px/1.5 var(--fb);
+  color:var(--fg);background:#fff;border:1px solid var(--hair);border-radius:8px;padding:8px 10px;resize:vertical}
+.fields input:focus,.fields textarea:focus,.fields select:focus{outline:none;border-color:var(--clay)}
+.addt{display:flex;align-items:center;justify-content:center;background:var(--tint);border:1px dashed var(--hair);
+  aspect-ratio:3/4;cursor:pointer;color:var(--dim);font:400 26px/1 var(--fb);transition:.15s}
+.addt:hover{border-color:var(--clay);color:var(--clay);background:#fff}
+.ghp{margin:14px 0 0;background:var(--tint);border:1px solid var(--hair);border-radius:10px;padding:14px}
+.ghp p{font:400 11.5px/1.6 var(--fb);color:var(--dim);margin:0 0 9px}
+.ghp b{color:var(--fg)}
+.ghp input{width:100%;box-sizing:border-box;font:400 12px/1.4 var(--fb);border:1px solid var(--hair);
+  border-radius:8px;padding:8px 10px;background:#fff}
+
+.ab .opts button{position:relative}
+.delv{position:absolute;top:5px;right:5px;width:20px;height:20px;border-radius:50%;
+  background:rgba(61,47,38,.72);color:#fff;font:400 13px/20px var(--fb);text-align:center;
+  opacity:0;transition:.15s;cursor:pointer}
+.ab .opts button:hover .delv{opacity:1}
+.delv:hover{background:#8d3b2f}
+.addv figure{display:flex;align-items:center;justify-content:center;background:var(--tint);
+  border:1px dashed var(--hair);color:var(--dim);font:400 22px/1 var(--fb)}
+.addv:hover figure{border-color:var(--clay);color:var(--clay)}
 </style>
 </head>
 <body>
@@ -244,12 +278,7 @@ const POSTS=[
   en:"If you live in Rota, you're going to want to know about this. Just 30 minutes away in Jerez.\n\nJoin the waitlist 🤍",
   action:"Decide: reel or carousel. Then pick one of the two scripts below.",
   scripts:[{"label": "Opción 1", "text": "Rota girls… this is only 30 minutes away. 👀\n\nWe're building something new in Jerez.\n\nPilates. Reformer. Barre. Sculpt.\nEvents. Community.\nAnd classes in English too.\n\nA place to move, meet people and actually look forward to coming back to.\n\nBastida is coming this winter.\nJoin the waitlist 🤍"},{"label": "Opción 2", "text": "If you live in Rota, you're going to want to know about this.\n\nJust 30 minutes away in Jerez,\nwe're creating more than a Pilates studio.\n\nReformer. Barre. Sculpt.\nEvents. Community.\nClasses in English.\n\nAnd we're only getting started.\n\nBastida — coming this winter.\nJoin the waitlist 🤍"}]},
- {id:"n2",iso:"2026-10-26",n:"6",img:"covers/placeholder.jpg",date:"Lun 26 Oct",fmt:"Carousel",pillar:"La casa",sub:"Build with us",goal:"Reach",ad:"no",adwhy:"Carousels out-engage video at both Spanish studios measured. This is the swipeable version of the build story.",title:"Building Bastida.",es:"Construyendo Bastida.\n\nDesliza para ver cómo va.",en:"Building Bastida.\n\nSwipe to see how it's going.",note:"Falta portada. Carrusel 6–8 slides de la obra."},
- {id:"p7",img:"covers/p7.jpg",date:"Sin fecha",fmt:"Photo",pillar:"La casa",sub:"ASMR",
-  goal:"Reach",ad:"no",adwhy:"Atmosphere. Organic, and not scheduled — use it when a slot needs filling.",
-  title:"Ballet shoes, afternoon light.",
-  es:"Luz de tarde.",en:"Afternoon light.",
-  note:"Sin fecha — reserva de ambiente."},
+ {id:"n2",iso:"2026-10-26",n:"6",img:"covers/p7.jpg",date:"Lun 26 Oct",fmt:"Carousel",pillar:"La casa",sub:"Build with us",goal:"Reach",ad:"no",adwhy:"Carousels out-engage video at both Spanish studios measured. This is the swipeable version of the build story.",title:"Building Bastida.",es:"Construyendo Bastida.\n\nDesliza para ver cómo va.",en:"Building Bastida.\n\nSwipe to see how it's going.",note:"Portada: las zapatillas de ballet. Carrusel 6–8 slides de la obra detrás."},
  {id:"p9",iso:"2026-10-28",n:"7",img:"covers/p9.jpg",date:"Mié 28 Oct",fmt:"Reel",pillar:"Prueba social",sub:"Educativo",
   goal:"Reach",ad:"test",adwhy:"Same logic as the Reformer post — educational needs budget to travel. Barre is the half of the offer Jerez understands least.",
   title:"Barre in Jerez.",
@@ -282,8 +311,18 @@ const POSTS=[
 ];
 const ICON={Reel:"▶",Carrusel:"❏",Foto:"▢"};
 const KEY="bastida.feed.v1";
+const MKEY="bastida.feed.media.v1", XKEY="bastida.feed.extra.v1";
+let MEDIA={}; try{MEDIA=JSON.parse(localStorage.getItem(MKEY)||"{}")}catch(e){}
+try{const x=JSON.parse(localStorage.getItem(XKEY)||"[]");
+  if(Array.isArray(x))x.forEach(q=>{if(q&&q.id&&!POSTS.some(z=>z.id===q.id))POSTS.push(q)})}catch(e){}
 const BY={}; POSTS.forEach(p=>BY[p.id]=p);
-const src=p=>p.alts?(p.alts[p.alt]||p.alts[0]).img:p.img;
+const isMine=p=>!!(p&&p.mine);
+function saveExtra(){try{localStorage.setItem(XKEY,JSON.stringify(POSTS.filter(isMine)))}catch(e){}}
+function saveMedia(){try{localStorage.setItem(MKEY,JSON.stringify(MEDIA))}catch(e){}}
+const URLS={};
+const src=p=>{const m=MEDIA[p.id];if(m&&m.img&&URLS[m.img])return URLS[m.img];
+  return p.alts?(p.alts[p.alt]||p.alts[0]).img:(p.img||"covers/placeholder.jpg")};
+const vsrc=p=>{const m=MEDIA[p.id];if(m&&m.video&&URLS[m.video])return URLS[m.video];return p.video||""};
 
 let order=POSTS.map(p=>p.id);
 let hidden=[];
@@ -309,7 +348,7 @@ function render(){
     return `<button class="t" data-id="${id}" aria-label="${p.en.replace(/"/g,'&quot;')}">
       <img src="${src(p)}" alt="" draggable="false">
       <span class="ic">${ICON[p.fmt]||""}</span>
-      ${p.video?'<span class="play"><span>▶</span></span>':""}
+      ${vsrc(p)?'<span class="play"><span>▶</span></span>':""}
     </button>`}).join("");
   document.getElementById("np").textContent=order.filter(i=>!hidden.includes(i)).length;
 }
@@ -321,9 +360,19 @@ detail.addEventListener("click",e=>{
   if(rm){ const id=rm.dataset.remove; if(!hidden.includes(id))hidden.push(id);
     save(); render(); const left=shown(); showPost(left[left.length-1]||null);
     toast("Post removed — use Restore all to bring it back"); return; }
+  const dv=e.target.closest("[data-delv]");
+  if(dv){ e.stopPropagation(); delVar(current,dv.dataset.delv); return }
+  const av=e.target.closest("[data-addvar]");
+  if(av){ pick("image/*",f=>addVar(av.dataset.addvar,f)); return }
+  const mv=e.target.closest("[data-mine]");
+  if(mv){ const id=mv.dataset.for; MEDIA[id]=Object.assign({},MEDIA[id],{img:mv.dataset.mine});
+    saveMedia(); render(); showPost(id); toast("Your version is on the feed"); return }
   const b=e.target.closest("[data-alt]"); if(!b)return;
-  BY[b.dataset.for].alt=+b.dataset.alt; save(); render(); showPost(b.dataset.for);
-  toast(BY[b.dataset.for].alts[+b.dataset.alt].label+" aplicada al feed");
+  const id=b.dataset.for, q=BY[id];
+  if(MEDIA[id]){ delete MEDIA[id].img; if(!MEDIA[id].video&&!(MEDIA[id].vars||[]).length) delete MEDIA[id]; saveMedia() }
+  if(b.dataset.alt!=="orig") q.alt=+b.dataset.alt;
+  save(); render(); showPost(id);
+  toast((b.dataset.alt==="orig"?"Original":q.alts[+b.dataset.alt].label)+" aplicada al feed");
 });
 
 /* drag to reorder, with a threshold so a tap still opens the post */
@@ -348,7 +397,7 @@ grid.addEventListener("pointerup",e=>{
     const from=order.indexOf(dragId), to=order.indexOf(over.dataset.id);
     order.splice(to,0,order.splice(from,1)[0]); save(); render(); showPost(dragId);
   }else if(!moved){
-    const p=BY[dragId]; showPost(dragId); if(p.video) openVid(p.video);
+    const p=BY[dragId]; showPost(dragId); const v=vsrc(p); if(v) openVid(v);
   }
   dragId=null; moved=false;
   grid.querySelectorAll(".drag,.over").forEach(n=>n.classList.remove("drag","over"));
@@ -384,14 +433,13 @@ function showPost(id){
     ${p.scripts?p.scripts.map((s,i)=>`<details class="scr"${i===0?" open":""}><summary>Guión · ${s.label}</summary><p>${s.text}</p></details>`).join(""):""}
     ${p.scriptEs?`<details class="scr" open><summary>Guión · Opción 1 (larga) — Español</summary><p>${p.scriptEs}</p></details>`:""}
     ${p.scriptEn?`<details class="scr"><summary>Guión · Opción 1 (larga) — English</summary><p>${p.scriptEn}</p></details>`:""}
-    ${p.alts?`<div class="ab"><div class="lab">Choose a version</div><div class="opts">${
-      p.alts.map((a,i)=>`<button data-alt="${i}" data-for="${p.id}" aria-pressed="${p.alt===i}">
-        <figure><img src="${a.img}" alt=""></figure>
-        <span class="cap2"><i></i>${a.label}</span></button>`).join("")}</div></div>`:""}
+    ${versions(p)}
     ${p.live?`<p style="margin:16px 0 0"><a class="igl" href="${p.live}" target="_blank" rel="noopener">View on Instagram →</a></p>`:""}
-    ${p.video?`<p style="margin:16px 0 0;font-size:12.5px;color:var(--dim)">Tap the tile to play the reel.</p>`:""}
+    ${vsrc(p)?`<p style="margin:16px 0 0;font-size:12.5px;color:var(--dim)">Tap the tile to play the reel.</p>`:""}
+    <div id="upz"></div>
     <p style="margin:22px 0 0;border-top:1px solid var(--hair);padding-top:14px">
       <button class="danger" data-remove="${p.id}">Remove this post from the feed</button></p>`;
+  drawUp(p);
 }
 
 /* share the arrangement back */
@@ -504,6 +552,256 @@ tF.onclick=()=>tab(false); tC.onclick=()=>tab(true);
 
 drawV();
 showPost(shown()[shown().length-1]);
+
+/* ================= media uploads + my own posts ================= */
+const GH={owner:"katerini007",repo:"bastida-preview-9bb2e9",branch:"main"};
+const TKEY="bastida.feed.ghtoken.v1";
+
+/* --- IndexedDB: the actual image / video bytes --- */
+let DB=null;
+function db(){return DB||(DB=new Promise((res,rej)=>{
+  const r=indexedDB.open("bastida-media",1);
+  r.onupgradeneeded=()=>r.result.createObjectStore("files");
+  r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error);}))}
+async function putFile(k,v){const d=await db();return new Promise((res,rej)=>{
+  const t=d.transaction("files","readwrite");t.objectStore("files").put(v,k);
+  t.oncomplete=res;t.onerror=()=>rej(t.error)})}
+async function getFile(k){const d=await db();return new Promise((res,rej)=>{
+  const r=d.transaction("files","readonly").objectStore("files").get(k);
+  r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function delFile(k){const d=await db();return new Promise(res=>{
+  const t=d.transaction("files","readwrite");t.objectStore("files").delete(k);t.oncomplete=res})}
+
+async function hydrate(){
+  const ids=new Set();
+  Object.values(MEDIA).forEach(m=>{if(m.img)ids.add(m.img);if(m.video)ids.add(m.video);(m.vars||[]).forEach(v=>ids.add(v.mid))});
+  for(const id of ids){ if(URLS[id])continue;
+    try{const f=await getFile(id); if(f&&f.blob) URLS[id]=URL.createObjectURL(f.blob);}catch(e){} }
+}
+
+const MAXMB={img:12,video:45};
+async function take(postId,kind,file){
+  if(!file)return;
+  const mb=file.size/1048576;
+  if(mb>MAXMB[kind]){toast(kind==="img"?"Image too large — keep it under 12 MB":"Video too large — keep it under 45 MB");return}
+  const id=kind+"_"+postId+"_"+Date.now();
+  const old=(MEDIA[postId]||{})[kind];
+  await putFile(id,{blob:file,name:file.name,type:file.type||"",pending:true});
+  if(old){ if(URLS[old]){URL.revokeObjectURL(URLS[old]);delete URLS[old]} delFile(old).catch(()=>{}) }
+  URLS[id]=URL.createObjectURL(file);
+  MEDIA[postId]=Object.assign({},MEDIA[postId],{[kind]:id});
+  saveMedia(); render(); showPost(postId);
+  toast(kind==="img"?"Cover replaced — saved on this device":"Video attached — saved on this device");
+}
+async function clearMedia(postId,kind){
+  const m=MEDIA[postId]; if(!m||!m[kind])return;
+  const id=m[kind];
+  if(URLS[id]){URL.revokeObjectURL(URLS[id]);delete URLS[id]}
+  delFile(id).catch(()=>{}); delete m[kind];
+  if(!m.img&&!m.video)delete MEDIA[postId];
+  saveMedia(); render(); showPost(postId); toast("Back to the original");
+}
+
+/* --- the uploader block inside the detail panel --- */
+function drawUp(p){
+  const z=document.getElementById("upz"); if(!z)return;
+  const m=MEDIA[p.id]||{};
+  const mine=isMine(p);
+  z.innerHTML=
+   '<div class="upbox"><div class="lab">Your own media</div><div class="uprow">'
+   +'<button class="upb'+(m.video?" on":"")+'" data-pick="video">'+(m.video?"✓ Your video":"Upload a video")+'</button>'
+   +(m.video?'<button class="upb" data-clear="video">Remove the video</button>':"")
+   +'</div>'
+   +'<p class="upnote">Covers go in <b>Choose a version</b> above — add as many as you like, tap one to put it on the feed. Saved straight onto this device; nothing leaves it until you press <b>Publish to GitHub</b>. JPG/PNG up to 12 MB, MP4 up to 45 MB.</p>'
+   +(mine?'<div class="fields">'
+      +'<div><label>Title</label><input data-f="title" value="'+esc(p.title||"")+'"></div>'
+      +'<div><label>Date shown</label><input data-f="date" value="'+esc(p.date||"")+'"></div>'
+      +'<div><label>Format</label><input data-f="fmt" value="'+esc(p.fmt||"")+'"></div>'
+      +'<div><label>Pillar</label><select data-f="pillar">'
+        +["La casa","¿Y si lo prueba…?","English layer","Prueba social"].map(x=>'<option'+(p.pillar===x?" selected":"")+'>'+x+'</option>').join("")
+      +'</select></div>'
+      +'<div><label>Sub-type</label><input data-f="sub" value="'+esc(p.sub||"")+'"></div>'
+      +'<div><label>Caption · Español</label><textarea data-f="es" rows="4">'+esc(p.es||"")+'</textarea></div>'
+      +'<div><label>Caption · English</label><textarea data-f="en" rows="4">'+esc(p.en||"")+'</textarea></div>'
+      +'<div><label>Notes to me</label><textarea data-f="adwhy" rows="2">'+esc(p.adwhy||"")+'</textarea></div>'
+      +'</div><p class="upnote">Typing saves as you go.</p>':"")
+   +'</div>';
+}
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;")}
+
+/* a hidden file input we reuse */
+const fi=document.createElement("input"); fi.type="file"; fi.style.display="none";
+document.body.appendChild(fi);
+function pick(accept,cb){ fi.value=""; fi.accept=accept;
+  fi.onchange=()=>{const f=fi.files&&fi.files[0]; if(f)cb(f)}; fi.click(); }
+
+detail.addEventListener("click",e=>{
+  const b=e.target.closest("[data-pick]");
+  if(b){ const k=b.dataset.pick;
+    pick(k==="img"?"image/*":"video/*",f=>take(current,k,f)); return }
+  const c=e.target.closest("[data-clear]");
+  if(c) clearMedia(current,c.dataset.clear);
+});
+detail.addEventListener("input",e=>{
+  const f=e.target.closest("[data-f]"); if(!f||!current)return;
+  const p=BY[current]; if(!isMine(p))return;
+  p[f.dataset.f]=f.value;
+  saveExtra();
+  const t=grid.querySelector('.t[data-id="'+current+'"]');
+  if(t) t.setAttribute("aria-label",p.en||"");
+});
+
+/* --- add a post of my own --- */
+function addPost(){
+  const id="u_"+Date.now();
+  const p={id,mine:true,img:"covers/placeholder.jpg",date:"Sin fecha",fmt:"Reel",
+    pillar:"La casa",sub:"ASMR",goal:"Reach",ad:"no",
+    adwhy:"Added by Jen — not reviewed yet.",title:"New post",es:"",en:"New post"};
+  POSTS.push(p); BY[id]=p; order.push(id);
+  saveExtra(); save(); render(); showPost(id);
+  document.querySelector('.t[data-id="'+id+'"]')?.scrollIntoView({block:"center",behavior:"smooth"});
+  toast("New post added — upload a cover for it");
+}
+const _render=render;
+render=function(){ _render();
+  const a=document.createElement("button");
+  a.className="addt"; a.type="button"; a.title="Add a post"; a.textContent="+";
+  a.onclick=addPost; grid.insertBefore(a,grid.firstChild);
+};
+
+/* --- publish to GitHub so the client sees it too --- */
+function ghToken(){try{return localStorage.getItem(TKEY)||""}catch(e){return""}}
+const b64=blob=>new Promise(res=>{const r=new FileReader();
+  r.onload=()=>res(String(r.result).split(",")[1]); r.readAsDataURL(blob)});
+
+async function ghPut(path,content,msg){
+  const t=ghToken(), base="https://api.github.com/repos/"+GH.owner+"/"+GH.repo+"/contents/"+path;
+  let sha=null;
+  const probe=await fetch(base+"?ref="+GH.branch,{headers:{Authorization:"Bearer "+t,Accept:"application/vnd.github+json"}});
+  if(probe.ok){ sha=(await probe.json()).sha }
+  const r=await fetch(base,{method:"PUT",
+    headers:{Authorization:"Bearer "+t,Accept:"application/vnd.github+json","Content-Type":"application/json"},
+    body:JSON.stringify(Object.assign({message:msg,content,branch:GH.branch},sha?{sha}:{}))});
+  if(!r.ok) throw new Error("GitHub said "+r.status+" "+(await r.text()).slice(0,140));
+}
+
+async function publish(btn){
+  if(!ghToken()){ toast("Paste your GitHub token first"); return }
+  btn.disabled=true; const was=btn.textContent;
+  try{
+    const ids=new Set(); Object.values(MEDIA).forEach(m=>{if(m.img)ids.add(m.img);if(m.video)ids.add(m.video);(m.vars||[]).forEach(v=>ids.add(v.mid))});
+    let n=0; const paths={};
+    for(const id of ids){
+      const f=await getFile(id); if(!f)continue;
+      const ext=(f.name.match(/\.[a-z0-9]+$/i)||[(f.type||"").startsWith("video")?".mp4":".jpg"])[0].toLowerCase();
+      const path="uploads/"+id+ext;
+      if(f.pending){ btn.textContent="Uploading "+(++n)+"/"+ids.size+"…";
+        await ghPut(path,await b64(f.blob),"Upload "+path);
+        await putFile(id,Object.assign({},f,{pending:false,path}));
+      }
+      paths[id]=path;
+    }
+    btn.textContent="Saving the arrangement…";
+    const payload={savedAt:new Date().toISOString(),order,hidden,
+      alts:state().alts, media:MEDIA, paths, extra:POSTS.filter(isMine)};
+    await ghPut("data/feed.json",btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,1)))),"Save feed arrangement");
+    btn.textContent=was; btn.disabled=false;
+    toast("Published — live in about a minute");
+  }catch(err){ btn.textContent=was; btn.disabled=false; toast(String(err.message||err)) }
+}
+
+/* --- on load, pull whatever was published so the client sees it --- */
+async function pullPublished(){
+  try{
+    const r=await fetch("data/feed.json?t="+Date.now()); if(!r.ok)return;
+    const d=await r.json(); if(!d)return;
+    (d.extra||[]).forEach(q=>{if(q&&q.id&&!BY[q.id]){POSTS.push(q);BY[q.id]=q}});
+    if(d.media&&d.paths) Object.entries(d.media).forEach(([pid,m])=>{
+      const cur=MEDIA[pid]||{};
+      ["img","video"].forEach(k=>{ const id=m[k];
+        if(id&&!cur[k]&&d.paths[id]){ MEDIA[pid]=Object.assign({},MEDIA[pid],{[k]:id}); URLS[id]=d.paths[id] } });
+    });
+    if(!localStorage.getItem(KEY)) apply({order:d.order,hidden:d.hidden,alts:d.alts});
+    render(); showPost(current||shown()[shown().length-1]);
+  }catch(e){}
+}
+
+/* --- the publish panel, under Saved versions --- */
+(function(){
+  const host=document.getElementById("detail").parentElement||document.body;
+  const box=document.createElement("div"); box.className="ghp";
+  box.innerHTML='<p><b>Publish to GitHub.</b> Uploads live only on this device until you publish. '
+    +'Publishing copies them into the repo so your client sees them too.</p>'
+    +'<p>Needs a <b>fine-grained token</b> scoped to <b>this one repo</b>, Contents → Read and write. '
+    +'It is kept in this browser. This page is public, so treat the token as something only you should ever have on screen — '
+    +'and delete it in GitHub if the device is ever shared.</p>'
+    +'<input id="ghtok" type="password" placeholder="github_pat_… (saved on this device)" autocomplete="off">'
+    +'<div class="uprow" style="margin-top:10px">'
+    +'<button class="upb" id="ghsave">Save token</button>'
+    +'<button class="upb on" id="ghpub">Publish to GitHub</button>'
+    +'<button class="upb" id="ghforget">Forget token</button></div>';
+  const anchor=document.getElementById("viewFeed")||host;
+  anchor.appendChild(box);
+  const tk=box.querySelector("#ghtok");
+  if(ghToken()) tk.placeholder="Token saved on this device";
+  box.querySelector("#ghsave").onclick=()=>{
+    const v=tk.value.trim(); if(!v){toast("Paste the token first");return}
+    try{localStorage.setItem(TKEY,v)}catch(e){}
+    tk.value=""; tk.placeholder="Token saved on this device"; toast("Token saved on this device");
+  };
+  box.querySelector("#ghforget").onclick=()=>{
+    try{localStorage.removeItem(TKEY)}catch(e){}
+    tk.placeholder="github_pat_… (saved on this device)"; toast("Token removed from this device");
+  };
+  box.querySelector("#ghpub").onclick=e=>publish(e.currentTarget);
+})();
+
+hydrate().then(()=>{render();showPost(shown()[shown().length-1]);return pullPublished()});
+
+/* ---- versions: the built-in options plus any Jen uploads ---- */
+function versions(p){
+  const m=MEDIA[p.id]||{}, mine=m.vars||[], baked=p.alts||[];
+  let o='<div class="ab"><div class="lab">Choose a version</div><div class="opts">';
+  if(baked.length){
+    baked.forEach((a,i)=>{ o+='<button data-alt="'+i+'" data-for="'+p.id+'" aria-pressed="'+(!m.img&&p.alt===i)+'">'
+      +'<figure><img src="'+a.img+'" alt=""></figure>'
+      +'<span class="cap2"><i></i>'+esc(a.label)+'</span></button>' });
+  }else if(p.img){
+    o+='<button data-alt="orig" data-for="'+p.id+'" aria-pressed="'+(!m.img)+'">'
+      +'<figure><img src="'+p.img+'" alt=""></figure>'
+      +'<span class="cap2"><i></i>Original</span></button>';
+  }
+  mine.forEach(v=>{ o+='<button data-mine="'+v.mid+'" data-for="'+p.id+'" aria-pressed="'+(m.img===v.mid)+'">'
+    +'<figure><img src="'+(URLS[v.mid]||"covers/placeholder.jpg")+'" alt=""></figure>'
+    +'<span class="cap2"><i></i>'+esc(v.label)+'</span>'
+    +'<span class="delv" data-delv="'+v.mid+'" title="Delete this version">×</span></button>' });
+  o+='<button class="addv" data-addvar="'+p.id+'"><figure><span>+</span></figure>'
+    +'<span class="cap2">Add a version</span></button>';
+  return o+'</div></div>';
+}
+
+async function addVar(postId,file){
+  if(!file)return;
+  if(file.size/1048576>MAXMB.img){toast("Image too large — keep it under 12 MB");return}
+  const mid="img_"+postId+"_"+Date.now();
+  await putFile(mid,{blob:file,name:file.name,type:file.type||"",pending:true});
+  URLS[mid]=URL.createObjectURL(file);
+  const m=MEDIA[postId]||{}; const vars=(m.vars||[]).slice();
+  vars.push({mid,label:"Mía "+(vars.length+1)});
+  MEDIA[postId]=Object.assign({},m,{vars,img:mid});
+  saveMedia(); render(); showPost(postId);
+  toast("Version added — it is on the feed now");
+}
+async function delVar(postId,mid){
+  const m=MEDIA[postId]; if(!m)return;
+  m.vars=(m.vars||[]).filter(v=>v.mid!==mid);
+  if(m.img===mid) delete m.img;
+  if(URLS[mid]){URL.revokeObjectURL(URLS[mid]);delete URLS[mid]}
+  delFile(mid).catch(()=>{});
+  if(!m.img&&!m.video&&!m.vars.length) delete MEDIA[postId];
+  saveMedia(); render(); showPost(postId); toast("Version deleted");
+}
+
 </script>
 </body>
 </html>
