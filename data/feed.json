@@ -1,5 +1,5 @@
 {
- "savedAt": "2026-10-29T18:40:35.053Z",
+ "savedAt": "2026-10-29T18:41:36.888Z",
  "layoutT": 1793298676984,
  "order": [
   "p5",
@@ -129,13 +129,51 @@
     "t": 1793299224844
    },
    "es": {
-    "v": "Barre llega a Jerez. 🤍🩰\n\nUn poquito de ballet, un poquito de Pilates… ¡y mucho temblor!\n\nTonifica y fortalece tus músculos, mejora tu postura y descubre por qué esos pequeños movimientos enganchan tanto.\nMuy pronto en Bastida. ✨\n\nApúntate a nuestra lista de espera — enlace en la bio.",
-    "t": 1793299230465
+    "v": "Barre llega a Jerez. 🤍🩰\n\nUn poquito de ballet, un poquito de Pilates… ¡y mucho temblor!\n\nTonifica y fortalece tus músculos, mejora tu postura y descubre por qué esos pequeños movimientos enganchan tanto.\n\nMuy pronto en Bastida. ✨\n\nApúntate a nuestra lista de espera — enlace en la bio.",
+    "t": 1793299282207
+   },
+   "en": {
+    "v": "Barre is coming to Jerez. 🤍🩰\n\nA little ballet, a little Pilates, a whole lot of shaking.\n\nSculpt stronger muscles, improve your posture and discover why those tiny movements are so addictive.\n\nComing soon to Bastida. ✨\n\nJoin our waitlist — link in bio.",
+    "t": 1793299279832
    }
   }
  },
  "extra": [],
  "versions": [
+  {
+   "name": "Version 3",
+   "ts": "29 Oct",
+   "s": {
+    "order": [
+     "p5",
+     "live1",
+     "live3",
+     "p3",
+     "live2",
+     "p2",
+     "p4",
+     "p6",
+     "n2",
+     "hw",
+     "p9",
+     "n1",
+     "as",
+     "p8"
+    ],
+    "alts": {
+     "p4": 0,
+     "p2": 0,
+     "n1": 1,
+     "hw": 0,
+     "as": 0,
+     "p5": 0
+    },
+    "hidden": [
+     "p5",
+     "p8"
+    ]
+   }
+  },
   {
    "name": "Version 2",
    "ts": "29 Oct",
