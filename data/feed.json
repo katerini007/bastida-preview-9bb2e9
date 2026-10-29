@@ -1,5 +1,5 @@
 {
- "savedAt": "2026-10-29T18:13:18.563Z",
+ "savedAt": "2026-10-29T18:24:10.234Z",
  "layoutT": 1793297598568,
  "order": [
   "p5",
@@ -49,7 +49,8 @@
      "label": "Mía 4"
     }
    ],
-   "video": "video_n2_1793295944530"
+   "video": "video_n2_1793295944530",
+   "gone": []
   }
  },
  "paths": {
@@ -59,7 +60,18 @@
   "img_n2_1793295881789": "uploads/img_n2_1793295881789.jpg",
   "img_n2_1793295886298": "uploads/img_n2_1793295886298.jpg"
  },
- "edits": {},
+ "edits": {
+  "n2": {
+   "fmt": {
+    "v": "reel",
+    "t": 1793298236359
+   },
+   "title": {
+    "v": "Building Bastida. Pica",
+    "t": 1793298245676
+   }
+  }
+ },
  "extra": [],
  "versions": [
   {
