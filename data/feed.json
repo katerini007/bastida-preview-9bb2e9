@@ -1,6 +1,6 @@
 {
- "savedAt": "2026-10-29T18:26:46.956Z",
- "layoutT": 1793297598568,
+ "savedAt": "2026-10-29T18:28:21.927Z",
+ "layoutT": 1793298456394,
  "order": [
   "p5",
   "live1",
@@ -11,9 +11,9 @@
   "p4",
   "p6",
   "n2",
+  "hw",
   "n1",
   "p9",
-  "hw",
   "as",
   "p8"
  ],
@@ -81,6 +81,20 @@
    "adwhy": {
     "v": "this is to share our brand identity through interior design elements and  engage with bigger profile audience",
     "t": 1793298362276
+   }
+  },
+  "hw": {
+   "fmt": {
+    "v": "Carousel",
+    "t": 1793298449085
+   },
+   "es": {
+    "v": "Spooky season, en versión pilates. 👻\n\nY sí, el reformer también da miedo solo el primer día.",
+    "t": 1793298488483
+   },
+   "en": {
+    "v": "Spooky season, pilates style. 👻\n\nAnd yes, the reformer is scary only on day one.",
+    "t": 1793298497360
    }
   }
  },
