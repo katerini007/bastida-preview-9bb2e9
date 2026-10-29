@@ -225,12 +225,52 @@ details.ghp>summary i{font-style:normal;color:var(--dim);letter-spacing:.06em;te
 details.ghp>summary:hover{color:var(--fg)}
 details.ghp[open]>summary{color:var(--fg)}
 .ghb{padding:0 18px 18px;background:var(--tint);margin:0 10px 10px;border-radius:10px;padding-top:14px}
+/* ---- stories ---- */
+.swk{display:grid;grid-template-columns:repeat(7,1fr);gap:6px 4px;margin:0 0 6px}
+.swl{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin:18px 0 10px}
+.sd{background:none;border:0;padding:0;font:inherit;color:var(--fg);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px}
+.sd .ring{width:62px;height:62px;border-radius:50%;padding:2.5px;background:var(--hair);display:grid;place-items:center}
+.sd.has .ring{background:conic-gradient(from 200deg,#C9A15B,#A6825F,#D9B98A,#C9A15B)}
+.sd .in{width:100%;height:100%;border-radius:50%;border:2.5px solid var(--bg);background:var(--bg) center/cover no-repeat;
+  display:grid;place-items:center;font:400 22px/1 var(--fd);color:var(--dim)}
+.sd.has .in{color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.45)}
+.sd .dl{font-size:10.5px;color:var(--dim);letter-spacing:.04em}
+.sd.has .dl{color:var(--fg);font-weight:600}
+.sd.sel .dl{text-decoration:underline;text-underline-offset:3px}
+.sd.today .dl::after{content:" · hoy";color:var(--clay)}
+.sd .n{font-size:9.5px;color:var(--clay);font-weight:600;min-height:12px}
+@media (max-width:520px){.sd .ring{width:44px;height:44px}.sd .in{font-size:17px}.sd .dl{font-size:9.5px}}
+.sday{margin:26px 0 0;border-top:1px solid var(--hair);padding-top:20px}
+.sday h2{margin:0 0 4px}
+.scards{display:grid;gap:14px;margin:16px 0 0}
+.scard{display:grid;grid-template-columns:96px 1fr;gap:14px;background:var(--bg);border:1px solid var(--hair);border-radius:12px;padding:12px}
+.scard .th{width:96px;aspect-ratio:9/16;border-radius:8px;background:#000 center/cover no-repeat;border:0;cursor:pointer;position:relative;padding:0}
+.scard .th i{position:absolute;inset:auto 6px 6px auto;color:#fff;font-style:normal;font-size:11px;text-shadow:0 1px 3px #000}
+.scard .fields{margin:0}
+.sadd{margin:14px 0 0}
+.sv{position:fixed;inset:0;background:rgba(20,15,12,.94);z-index:60;display:none;align-items:center;justify-content:center}
+.sv[data-open]{display:flex}
+.sv .fr{position:relative;height:min(92vh,calc(100vw*16/9));aspect-ratio:9/16;max-width:100vw;background:#000;border-radius:12px;overflow:hidden}
+.sv .fr>img,.sv .fr>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.sv .bars{position:absolute;top:10px;left:10px;right:10px;display:flex;gap:4px;z-index:3}
+.sv .bars span{flex:1;height:2.5px;background:rgba(255,255,255,.35);border-radius:2px;overflow:hidden}
+.sv .bars b{display:block;height:100%;width:0;background:#fff}
+.sv .hd{position:absolute;top:22px;left:12px;right:44px;display:flex;align-items:center;gap:8px;color:#fff;font-size:12.5px;font-weight:600;z-index:3;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.sv .hd img{width:28px;height:28px;border-radius:50%;background:#fff}
+.sv .hd span{font-weight:400;opacity:.8}
+.sv .ost{position:absolute;left:8%;right:8%;top:58%;z-index:3;text-align:center}
+.sv .ost p{display:inline;background:#fff;color:#111;font:600 15px/1.6 var(--fb);padding:3px 8px;border-radius:6px;
+  white-space:pre-line;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.sv .tap{position:absolute;top:0;bottom:0;width:35%;z-index:2;background:none;border:0;cursor:pointer}
+.sv .tap.l{left:0}.sv .tap.r{right:0;width:65%}
+.sv .sx{position:absolute;top:18px;right:10px;z-index:4;background:none;border:0;color:#fff;font-size:26px;cursor:pointer;line-height:1}
 </style>
 </head>
 <body>
 <div class="tabbar">
   <button id="tabFeed" aria-selected="true">Feed</button>
   <button id="tabCal" aria-selected="false">Calendar</button>
+  <button id="tabStories" aria-selected="false">Stories</button>
 </div>
 <div class="wrap" id="viewFeed">
 
@@ -272,6 +312,8 @@ details.ghp[open]>summary{color:var(--fg)}
 </div>
 
 <div class="wrap cal" id="viewCal" hidden><div id="calbody"></div></div>
+<div class="wrap cal" id="viewStories" hidden><div id="storybody"></div></div>
+<div class="sv" id="sv"><div class="fr" id="svfr"></div></div>
 
 <div class="lb" id="lb">
   <button class="x" id="x" aria-label="Cerrar">×</button>
@@ -349,7 +391,7 @@ const touch=pid=>{MEDIA[pid]=Object.assign({},MEDIA[pid],{t:Date.now()});return 
 const EKEY="bastida.feed.edits.v1";
 let EDITS={}; try{EDITS=JSON.parse(localStorage.getItem(EKEY)||"{}")}catch(e){}
 function saveEdits(){try{localStorage.setItem(EKEY,JSON.stringify(EDITS))}catch(e){} autoPub()}
-function applyEdits(){Object.entries(EDITS).forEach(([pid,f])=>{const p=BY[pid];if(p)Object.entries(f).forEach(([k,o])=>{p[k]=o.v})})}
+function applyEdits(){Object.entries(EDITS).forEach(([pid,f])=>{const p=BY[pid]||(typeof SBY!=="undefined"&&SBY[pid]);if(p)Object.entries(f).forEach(([k,o])=>{p[k]=o.v})})}
 applyEdits();
 const URLS={};
 const src=p=>{const m=MEDIA[p.id];if(m&&m.img&&URLS[m.img])return URLS[m.img];
@@ -596,11 +638,13 @@ function drawCal(){
     tab(false); showPost(b.dataset.go);
     document.querySelector('.t[data-id="'+b.dataset.go+'"]')?.scrollIntoView({block:"center",behavior:"smooth"});};
 }
-const tF=document.getElementById("tabFeed"), tC=document.getElementById("tabCal");
-function tab(cal){ tF.setAttribute("aria-selected",!cal); tC.setAttribute("aria-selected",cal);
-  document.getElementById("viewFeed").hidden=cal; document.getElementById("viewCal").hidden=!cal;
-  if(cal) drawCal(); }
-tF.onclick=()=>tab(false); tC.onclick=()=>tab(true);
+const tF=document.getElementById("tabFeed"), tC=document.getElementById("tabCal"), tS=document.getElementById("tabStories");
+function tab(v){ v=v===true?"cal":v===false?"feed":v;
+  tF.setAttribute("aria-selected",v==="feed"); tC.setAttribute("aria-selected",v==="cal"); tS.setAttribute("aria-selected",v==="stories");
+  document.getElementById("viewFeed").hidden=v!=="feed"; document.getElementById("viewCal").hidden=v!=="cal";
+  document.getElementById("viewStories").hidden=v!=="stories";
+  if(v==="cal") drawCal(); if(v==="stories") drawStories(); }
+tF.onclick=()=>tab("feed"); tC.onclick=()=>tab("cal"); tS.onclick=()=>tab("stories");
 
 drawV();
 showPost(shown()[shown().length-1]);
@@ -758,6 +802,7 @@ function mergeIn(d){
   Object.assign(PATHS,d.paths||{});
   (d.extra||[]).forEach(q=>{if(q&&q.id&&!BY[q.id]){POSTS.push(q);BY[q.id]=q;if(!order.includes(q.id))order.push(q.id)}});
   saveExtra();
+  (d.stories||[]).forEach(q=>{if(q&&q.id&&!SBY[q.id]){SEXTRA.push(q);SBY[q.id]=q}}); saveSExtra();
   Object.entries(d.edits||{}).forEach(([pid,fl])=>Object.entries(fl).forEach(([k,o])=>{
     const cur=(EDITS[pid]||{})[k]; if(!cur||(o.t||0)>(cur.t||0)) (EDITS[pid]=EDITS[pid]||{})[k]=o }));
   saveEdits(); applyEdits();
@@ -800,7 +845,7 @@ async function publish(btn){
     btn.textContent="Saving the arrangement…";
     const key=v=>v.name+"|"+v.ts, vs=getV().concat(SHAREDV).filter((v,i,a)=>a.findIndex(x=>key(x)===key(v))===i);
     const payload={savedAt:new Date().toISOString(),layoutT:layoutT()||Date.now(),order,hidden,
-      alts:state().alts, media:MEDIA, paths:PATHS, edits:EDITS, extra:POSTS.filter(isMine), versions:vs};
+      alts:state().alts, media:MEDIA, paths:PATHS, edits:EDITS, extra:POSTS.filter(isMine), stories:SEXTRA, versions:vs};
     await ghPut("data/feed.json",btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,1)))),"Save feed arrangement");
     LASTPUB=payload.savedAt; drawLast();
     btn.textContent=was; btn.disabled=false; render(); showPost(current);
@@ -814,6 +859,7 @@ async function pullPublished(){
   try{
     const r=await fetch("data/feed.json?t="+Date.now(),{cache:"no-store"}); if(!r.ok)return;
     merge(await r.json()); drawV(); drawLast();
+    if(!document.getElementById("viewStories").hidden) drawStories();
     render(); showPost(current||shown()[shown().length-1]);
   }catch(e){}
 }
@@ -898,6 +944,130 @@ async function delVar(postId,mid){
   saveMedia(); render(); showPost(postId); toast("Version deleted");
 }
 
+
+/* ================= stories: day circles, a viewer, on-screen text per story ================= */
+var STORIES=[
+ {id:"s_1030_1",iso:"2026-10-30",kind:"video",src:"stories/2026-10-30-1.mp4",thumb:"stories/2026-10-30-1-t.jpg",ost:""},
+ {id:"s_1031_1",iso:"2026-10-31",kind:"img",src:"stories/2026-10-31-1.jpg",thumb:"stories/2026-10-31-1-t.jpg",ost:""},
+ {id:"s_1031_2",iso:"2026-10-31",kind:"img",src:"stories/2026-10-31-2.jpg",thumb:"stories/2026-10-31-2-t.jpg",ost:""},
+ {id:"s_1101_1",iso:"2026-11-01",kind:"video",src:"stories/2026-11-01-1.mp4",thumb:"stories/2026-11-01-1-t.jpg",ost:""}
+];
+const SXKEY="bastida.stories.extra.v1";
+var SEXTRA=[]; try{SEXTRA=JSON.parse(localStorage.getItem(SXKEY)||"[]")||[]}catch(e){}
+var SBY={}; STORIES.concat(SEXTRA).forEach(x=>SBY[x.id]=x);
+function saveSExtra(){try{localStorage.setItem(SXKEY,JSON.stringify(SEXTRA))}catch(e){} autoPub()}
+applyEdits();
+
+const skind=x=>{const m=MEDIA[x.id]||{};return m.video?"video":m.img?"img":x.kind};
+const ssrc=x=>{const m=MEDIA[x.id]||{},k=m.video||m.img;return (k&&URLS[k])||x.src||""};
+const sthumb=x=>skind(x)==="img"?ssrc(x):(x.thumb||"");
+const isoOf=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const dayLab=iso=>{const d=new Date(iso+"T12:00:00");return DAYS[d.getDay()]+" "+d.getDate()+" "+MN[d.getMonth()]};
+function storiesOn(iso){return Object.values(SBY).filter(x=>!x.gone&&x.iso===iso)
+  .sort((a,b)=>(a.time||"99").localeCompare(b.time||"99")||String(a.id).localeCompare(String(b.id)))}
+let SSEL=null;
+
+function drawStories(){
+  const all=Object.values(SBY).filter(x=>!x.gone&&x.iso), today=new Date(), tIso=isoOf(today);
+  const ds=all.map(x=>x.iso).sort();
+  const first=new Date(((ds[0]&&ds[0]<tIso)?ds[0]:tIso)+"T12:00:00");
+  const lastIso=ds.length&&ds[ds.length-1]>tIso?ds[ds.length-1]:tIso;
+  const last=new Date(lastIso+"T12:00:00"); last.setDate(last.getDate()+28);
+  const cur=new Date(first); cur.setDate(cur.getDate()-((cur.getDay()+6)%7));
+  if(!SSEL) SSEL=ds.find(i=>i>=tIso)||ds[ds.length-1]||tIso;
+  let o='<div class="calhead"><p class="eyebrow">Bastida × Zero To Reel</p><h1>Stories</h1>'
+    +'<p class="lede">Days with a ring have stories planned — tap one to watch them. The white box on each story is the on-screen text that will be added.</p></div>';
+  while(cur<=last){
+    o+='<div class="swl">Semana del '+cur.getDate()+' '+MN[cur.getMonth()]+'</div><div class="swk">';
+    for(let i=0;i<7;i++){ const d=new Date(cur); d.setDate(cur.getDate()+i); const iso=isoOf(d), on=storiesOn(iso), th=on.length?sthumb(on[0]):"";
+      o+='<button class="sd'+(on.length?" has":"")+(iso===SSEL?" sel":"")+(iso===tIso?" today":"")+'" data-sday="'+iso+'">'
+        +'<span class="ring"><span class="in"'+(th?' style="background-image:url(\''+esc(th)+'\')"':(on.length?' style="background:var(--clay)"':""))+'>'+(th?"":d.getDate())+'</span></span>'
+        +'<span class="dl">'+DN[(d.getDay()+6)%7]+' '+d.getDate()+'</span>'
+        +'<span class="n">'+(on.length?on.length+(on.length>1?" stories":" story"):"")+'</span></button>' }
+    o+='</div>'; cur.setDate(cur.getDate()+7);
+  }
+  const on=storiesOn(SSEL);
+  o+='<div class="sday" id="sday"><p class="eyebrow">'+(on.length?on.length+(on.length>1?" stories":" story"):"No stories yet")+'</p>'
+    +'<h2>'+dayLab(SSEL)+'</h2>'
+    +(on.length?'<p style="margin:10px 0 0"><button class="upb on" data-swatch>▶ Watch this day</button></p>':"")
+    +'<div class="scards">'+on.map((x,i)=>{ const k=skind(x), th=sthumb(x);
+      return '<div class="scard"><button class="th" data-splay="'+i+'"'+(th?' style="background-image:url(\''+esc(th)+'\')"':"")+'>'
+        +(!th&&k==="video"?'<video src="'+esc(ssrc(x))+'#t=0.5" muted playsinline preload="metadata" style="width:100%;height:100%;object-fit:cover;border-radius:8px"></video>':"")
+        +'<i>'+(k==="video"?"▶ video":"photo")+'</i></button>'
+        +'<div class="fields">'
+        +'<div><label>On-screen text</label><textarea data-sf="ost" data-sid="'+x.id+'" rows="3" placeholder="The text that goes on this story…">'+esc(x.ost||"")+'</textarea></div>'
+        +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">'
+        +'<div><label>Date</label><input type="date" data-sf="iso" data-sid="'+x.id+'" value="'+esc(x.iso)+'"></div>'
+        +'<div><label>Time</label><input type="time" data-sf="time" data-sid="'+x.id+'" value="'+esc(x.time||"")+'"></div></div>'
+        +'<div><label>Notes</label><textarea data-sf="note" data-sid="'+x.id+'" rows="2" placeholder="Sticker, link, music…">'+esc(x.note||"")+'</textarea></div>'
+        +'<p style="margin:0"><button class="danger" data-sdel="'+x.id+'">Remove this story</button></p>'
+        +'</div></div>' }).join("")+'</div>'
+    +'<p class="sadd"><button class="upb" data-sadd>+ Add a story to '+dayLab(SSEL)+'</button></p>'
+    +'<p class="upnote">Photo or video, 9:16. Typing and uploads save on this device, and to GitHub by themselves once the token is saved here.</p></div>';
+  document.getElementById("storybody").innerHTML=o;
+}
+
+const SB=document.getElementById("storybody");
+SB.addEventListener("click",e=>{
+  const d=e.target.closest("[data-sday]");
+  if(d){ SSEL=d.dataset.sday; drawStories(); if(storiesOn(SSEL).length) openStories(SSEL,0);
+    else document.getElementById("sday")?.scrollIntoView({behavior:"smooth",block:"start"}); return }
+  if(e.target.closest("[data-swatch]")) return openStories(SSEL,0);
+  const p=e.target.closest("[data-splay]"); if(p) return openStories(SSEL,+p.dataset.splay);
+  const x=e.target.closest("[data-sdel]");
+  if(x){ if(!confirm("Remove this story?"))return; setField(SBY[x.dataset.sdel],"gone",true); saveEdits(); drawStories(); toast("Story removed"); return }
+  if(e.target.closest("[data-sadd]")) pick("image/*,video/*",f=>addStory(SSEL,f));
+});
+SB.addEventListener("input",e=>{ const f=e.target.closest("[data-sf]"); if(!f)return;
+  const x=SBY[f.dataset.sid]; if(!x||f.dataset.sf==="iso")return;
+  setField(x,f.dataset.sf,f.value); saveEdits(); });
+SB.addEventListener("change",e=>{ const f=e.target.closest('[data-sf="iso"]'); if(!f||!f.value)return;
+  const x=SBY[f.dataset.sid]; if(!x)return;
+  setField(x,"iso",f.value); saveEdits(); SSEL=f.value; drawStories(); toast("Moved to "+dayLab(f.value)); });
+
+async function addStory(iso,file){
+  const kind=(file.type||"").startsWith("video")?"video":"img";
+  if(file.size/1048576>MAXMB[kind]){toast(kind==="img"?"Image too large — keep it under 12 MB":"Video too large — keep it under 45 MB");return}
+  const id="su_"+Date.now(), mid=kind+"_"+id;
+  await putFile(mid,{blob:file,name:file.name,type:file.type||"",pending:true});
+  URLS[mid]=URL.createObjectURL(file);
+  const x={id,iso,kind,mine:true,ost:""}; SEXTRA.push(x); SBY[id]=x;
+  MEDIA[id]={[kind]:mid,t:Date.now()};
+  saveSExtra(); saveMedia(); drawStories(); toast("Story added to "+dayLab(iso));
+}
+
+/* the viewer: tap right = next, left = back, photos hold 5 s, videos play through */
+const sv=document.getElementById("sv"), svfr=document.getElementById("svfr");
+let SQ=[], SI=0, SRAF=null;
+function openStories(iso,i){ SQ=storiesOn(iso); if(!SQ.length)return; SI=i||0; sv.setAttribute("data-open",""); showStory() }
+function closeStories(){ cancelAnimationFrame(SRAF); sv.removeAttribute("data-open"); svfr.innerHTML="" }
+function nextStory(){ if(SI<SQ.length-1){SI++;showStory()}else closeStories() }
+function prevStory(){ if(SI>0)SI--; showStory() }
+function showStory(){
+  cancelAnimationFrame(SRAF);
+  const x=SQ[SI], k=skind(x), u=ssrc(x);
+  svfr.innerHTML='<div class="bars">'+SQ.map((_,i)=>'<span><b style="width:'+(i<SI?100:0)+'%"></b></span>').join("")+'</div>'
+    +'<div class="hd"><img src="covers/logo-b.svg" alt="">bastidapilates <span>'+dayLab(x.iso)+(x.time?" · "+esc(x.time):"")+'</span></div>'
+    +'<button class="sx" aria-label="Close">×</button>'
+    +(k==="video"?'<video playsinline src="'+esc(u)+'"></video>':'<img src="'+esc(u)+'" alt="">')
+    +(x.ost?'<div class="ost"><p>'+esc(x.ost)+'</p></div>':"")
+    +'<button class="tap l" aria-label="Previous"></button><button class="tap r" aria-label="Next"></button>';
+  const bar=svfr.querySelectorAll(".bars b")[SI];
+  if(k==="video"){ const v=svfr.querySelector("video");
+    v.play().catch(()=>{v.muted=true;v.play().catch(()=>{})});
+    const tick=()=>{ if(v.duration) bar.style.width=(100*v.currentTime/v.duration)+"%"; SRAF=requestAnimationFrame(tick) }; tick();
+    v.onended=nextStory;
+  }else{ const t0=performance.now();
+    const tick=n=>{ const p=Math.min(1,(n-t0)/5000); bar.style.width=p*100+"%"; if(p<1)SRAF=requestAnimationFrame(tick); else nextStory() };
+    SRAF=requestAnimationFrame(tick) }
+}
+sv.addEventListener("click",e=>{
+  if(e.target===sv||e.target.closest(".sx")) return closeStories();
+  if(e.target.closest(".tap.r")) return nextStory();
+  if(e.target.closest(".tap.l")) return prevStory();
+});
+addEventListener("keydown",e=>{ if(!sv.hasAttribute("data-open"))return;
+  if(e.key==="Escape")closeStories(); if(e.key==="ArrowRight")nextStory(); if(e.key==="ArrowLeft")prevStory() });
 </script>
 </body>
 </html>
