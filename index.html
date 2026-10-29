@@ -336,14 +336,19 @@ try{const x=JSON.parse(localStorage.getItem(XKEY)||"[]");
   if(Array.isArray(x))x.forEach(q=>{if(q&&q.id&&!POSTS.some(z=>z.id===q.id))POSTS.push(q)})}catch(e){}
 const BY={}; POSTS.forEach(p=>BY[p.id]=p);
 const isMine=p=>!!(p&&p.mine);
-function saveExtra(){try{localStorage.setItem(XKEY,JSON.stringify(POSTS.filter(isMine)))}catch(e){}}
-function saveMedia(){try{localStorage.setItem(MKEY,JSON.stringify(MEDIA))}catch(e){}}
+/* auto-save to GitHub: any change, once a token is on this device, publishes a few seconds after you stop */
+let QUIET=0, AUTO=null, BUSY=false, AGAIN=false;
+function autoPub(){ if(QUIET)return; try{if(!ghToken())return}catch(e){return}
+  clearTimeout(AUTO); AUTO=setTimeout(async()=>{ if(BUSY){AGAIN=true;return}
+    BUSY=true; await publish(null); BUSY=false; if(AGAIN){AGAIN=false;autoPub()} },4000) }
+function saveExtra(){try{localStorage.setItem(XKEY,JSON.stringify(POSTS.filter(isMine)))}catch(e){} autoPub()}
+function saveMedia(){try{localStorage.setItem(MKEY,JSON.stringify(MEDIA))}catch(e){} autoPub()}
 /* every change carries a time, so two devices merge instead of overwriting each other */
 const touch=pid=>{MEDIA[pid]=Object.assign({},MEDIA[pid],{t:Date.now()});return MEDIA[pid]};
 /* caption / date / title edits on ANY post: {postId:{field:{v,t}}} laid over the built-in text */
 const EKEY="bastida.feed.edits.v1";
 let EDITS={}; try{EDITS=JSON.parse(localStorage.getItem(EKEY)||"{}")}catch(e){}
-function saveEdits(){try{localStorage.setItem(EKEY,JSON.stringify(EDITS))}catch(e){}}
+function saveEdits(){try{localStorage.setItem(EKEY,JSON.stringify(EDITS))}catch(e){} autoPub()}
 function applyEdits(){Object.entries(EDITS).forEach(([pid,f])=>{const p=BY[pid];if(p)Object.entries(f).forEach(([k,o])=>{p[k]=o.v})})}
 applyEdits();
 const URLS={};
@@ -365,7 +370,7 @@ function apply(s){ if(!s)return;
   if(Array.isArray(s.hidden)) hidden=s.hidden.filter(i=>BY[i]); }
 apply(fromHash());
 if(!fromHash()){try{apply(JSON.parse(localStorage.getItem(KEY)||"null"))}catch(e){}}
-function save(t){try{localStorage.setItem(KEY,JSON.stringify(Object.assign(state(),{t:t||Date.now()})))}catch(e){}}
+function save(t){try{localStorage.setItem(KEY,JSON.stringify(Object.assign(state(),{t:t||Date.now()})))}catch(e){} autoPub()}
 const layoutT=()=>{try{return (JSON.parse(localStorage.getItem(KEY)||"{}")||{}).t||0}catch(e){return 0}};
 
 const grid=document.getElementById("grid"), detail=document.getElementById("detail");
@@ -473,7 +478,7 @@ function showPost(id){
 /* share the arrangement back */
 const VKEY="bastida.feed.versions.v1";
 const getV=()=>{try{return JSON.parse(localStorage.getItem(VKEY)||"[]")}catch(e){return[]}};
-const setV=v=>{try{localStorage.setItem(VKEY,JSON.stringify(v))}catch(e){}};
+const setV=v=>{try{localStorage.setItem(VKEY,JSON.stringify(v))}catch(e){} autoPub()};
 let SHAREDV=[];
 function allV(){
   return getV().map((x,i)=>Object.assign({},x,{k:"m"+i}))
@@ -747,6 +752,8 @@ async function ghPut(path,content,msg){
 let PATHS={}, LASTPUB="";
 function merge(d){
   if(!d||typeof d!=="object")return;
+  QUIET++; try{ mergeIn(d) }finally{ QUIET-- } }
+function mergeIn(d){
   if(d.savedAt) LASTPUB=d.savedAt;
   Object.assign(PATHS,d.paths||{});
   (d.extra||[]).forEach(q=>{if(q&&q.id&&!BY[q.id]){POSTS.push(q);BY[q.id]=q;if(!order.includes(q.id))order.push(q.id)}});
@@ -771,7 +778,8 @@ function merge(d){
 
 async function publish(btn){
   if(!ghToken()){ toast("Paste your GitHub token first"); return }
-  btn.disabled=true; const was=btn.textContent;
+  btn=btn||document.getElementById("ghpub")||{}; btn.disabled=true; const was=btn.textContent;
+  QUIET++; toast("Saving to GitHub…");
   try{
     btn.textContent="Checking what is already published…";
     const api="https://api.github.com/repos/"+GH.owner+"/"+GH.repo+"/contents/data/feed.json?ref="+GH.branch;
@@ -796,8 +804,9 @@ async function publish(btn){
     await ghPut("data/feed.json",btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,1)))),"Save feed arrangement");
     LASTPUB=payload.savedAt; drawLast();
     btn.textContent=was; btn.disabled=false; render(); showPost(current);
-    toast("Published — live on every device in about a minute");
-  }catch(err){ btn.textContent=was; btn.disabled=false; toast(String(err.message||err)) }
+    toast("Saved to GitHub — on every device in about a minute");
+  }catch(err){ btn.textContent=was; btn.disabled=false; toast("Not saved to GitHub: "+String(err.message||err)) }
+  finally{ QUIET-- }
 }
 
 /* --- on load, pull whatever was published so every device sees it --- */
@@ -817,7 +826,7 @@ function drawLast(){const el=document.getElementById("ghlast"); if(!el)return;
   box.innerHTML='<summary>Publish to GitHub <i>— so Jen sees it too</i></summary>'
     +'<div class="ghb">'
     +'<p id="ghlast" style="font-weight:600"></p>'
-    +'<p>Your uploads, caption/date edits and saved versions live only on this device until you publish. '
+    +'<p><b>Once the token is saved here, every change saves to GitHub by itself</b> a few seconds after you stop — uploads, captions, dates, order. Do this once on the Mac and once on your phone. '
     +'Publishing copies them into the repo, so <b>Jen and the client see exactly what you see.</b></p>'
     +'<p>Needs a <b>fine-grained token</b> scoped to <b>this one repo</b>, Contents → Read and write. '
     +'It is kept in this browser. This page is public, so treat the token as something only you should ever have on screen — '
