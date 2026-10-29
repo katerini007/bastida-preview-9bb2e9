@@ -848,7 +848,9 @@ function drawLast(){const el=document.getElementById("ghlast"); if(!el)return;
     try{localStorage.removeItem(TKEY)}catch(e){}
     tk.placeholder="github_pat_… (saved on this device)"; toast("Token removed from this device");
   };
-  box.querySelector("#ghpub").onclick=e=>publish(e.currentTarget);
+  box.querySelector("#ghpub").onclick=e=>{ const v=tk.value.trim();
+    if(v){ try{localStorage.setItem(TKEY,v)}catch(_){} tk.value=""; tk.placeholder="Token saved on this device" }
+    publish(e.currentTarget) };
 })();
 
 hydrate().then(()=>{render();showPost(shown()[shown().length-1]);return pullPublished()});
