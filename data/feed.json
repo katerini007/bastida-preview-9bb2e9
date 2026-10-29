@@ -1,6 +1,6 @@
 {
- "savedAt": "2026-10-29T18:29:27.558Z",
- "layoutT": 1793298547983,
+ "savedAt": "2026-10-29T18:30:38.174Z",
+ "layoutT": 1793298633770,
  "order": [
   "p5",
   "live1",
@@ -12,8 +12,8 @@
   "p6",
   "n2",
   "n1",
-  "p9",
   "hw",
+  "p9",
   "as",
   "p8"
  ],
@@ -103,6 +103,16 @@
    "en": {
     "v": "Spooky season, pilates style. 👻\n\nAnd yes, the reformer is scary only on day one.",
     "t": 1793298497360
+   }
+  },
+  "n1": {
+   "iso": {
+    "v": "2026-10-30",
+    "t": 1793298611337
+   },
+   "date": {
+    "v": "Vie 30 Oct",
+    "t": 1793298611337
    }
   }
  },
