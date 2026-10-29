@@ -338,6 +338,14 @@ const BY={}; POSTS.forEach(p=>BY[p.id]=p);
 const isMine=p=>!!(p&&p.mine);
 function saveExtra(){try{localStorage.setItem(XKEY,JSON.stringify(POSTS.filter(isMine)))}catch(e){}}
 function saveMedia(){try{localStorage.setItem(MKEY,JSON.stringify(MEDIA))}catch(e){}}
+/* every change carries a time, so two devices merge instead of overwriting each other */
+const touch=pid=>{MEDIA[pid]=Object.assign({},MEDIA[pid],{t:Date.now()});return MEDIA[pid]};
+/* caption / date / title edits on ANY post: {postId:{field:{v,t}}} laid over the built-in text */
+const EKEY="bastida.feed.edits.v1";
+let EDITS={}; try{EDITS=JSON.parse(localStorage.getItem(EKEY)||"{}")}catch(e){}
+function saveEdits(){try{localStorage.setItem(EKEY,JSON.stringify(EDITS))}catch(e){}}
+function applyEdits(){Object.entries(EDITS).forEach(([pid,f])=>{const p=BY[pid];if(p)Object.entries(f).forEach(([k,o])=>{p[k]=o.v})})}
+applyEdits();
 const URLS={};
 const src=p=>{const m=MEDIA[p.id];if(m&&m.img&&URLS[m.img])return URLS[m.img];
   return p.alts?(p.alts[p.alt]||p.alts[0]).img:(p.img||"covers/placeholder.jpg")};
@@ -357,7 +365,8 @@ function apply(s){ if(!s)return;
   if(Array.isArray(s.hidden)) hidden=s.hidden.filter(i=>BY[i]); }
 apply(fromHash());
 if(!fromHash()){try{apply(JSON.parse(localStorage.getItem(KEY)||"null"))}catch(e){}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(state()))}catch(e){}}
+function save(t){try{localStorage.setItem(KEY,JSON.stringify(Object.assign(state(),{t:t||Date.now()})))}catch(e){}}
+const layoutT=()=>{try{return (JSON.parse(localStorage.getItem(KEY)||"{}")||{}).t||0}catch(e){return 0}};
 
 const grid=document.getElementById("grid"), detail=document.getElementById("detail");
 let current=null;
@@ -384,11 +393,11 @@ detail.addEventListener("click",e=>{
   const av=e.target.closest("[data-addvar]");
   if(av){ pick("image/*",f=>addVar(av.dataset.addvar,f)); return }
   const mv=e.target.closest("[data-mine]");
-  if(mv){ const id=mv.dataset.for; MEDIA[id]=Object.assign({},MEDIA[id],{img:mv.dataset.mine});
+  if(mv){ const id=mv.dataset.for; touch(id).img=mv.dataset.mine;
     saveMedia(); render(); showPost(id); toast("Your version is on the feed"); return }
   const b=e.target.closest("[data-alt]"); if(!b)return;
   const id=b.dataset.for, q=BY[id];
-  if(MEDIA[id]){ delete MEDIA[id].img; if(!MEDIA[id].video&&!(MEDIA[id].vars||[]).length) delete MEDIA[id]; saveMedia() }
+  if(MEDIA[id]){ delete touch(id).img; saveMedia() }
   if(b.dataset.alt!=="orig") q.alt=+b.dataset.alt;
   save(); render(); showPost(id);
   toast((b.dataset.alt==="orig"?"Original":q.alts[+b.dataset.alt].label)+" aplicada al feed");
@@ -432,8 +441,8 @@ function showPost(id){
   const ad=AD[p.ad]||AD.no;
   detail.innerHTML=`
     <p class="num">${p.n||"·"}</p>
-    <p class="when">${p.date} · ${p.live?"Published":"Scheduled"}</p>
-    <h2>${p.title||p.en.split("\n")[0]}</h2>
+    <p class="when" id="dWhen">${esc(p.date)} · ${esc(p.status||(p.live?"Published":"Scheduled"))}</p>
+    <h2 id="dTitle">${esc(p.title||p.en.split("\n")[0])}</h2>
     <dl class="facts">
       <div><dt>Format</dt><dd>${p.fmt}${p.cover?`<br><span style="color:var(--dim);font-weight:400;font-size:11.5px">cover only</span>`:""}</dd></div>
       <div><dt>Content pillar</dt><dd>${p.pillar}<br><span style="color:var(--dim);font-weight:400">${p.sub}</span></dd></div>
@@ -442,9 +451,9 @@ function showPost(id){
     </dl>
     <div class="cap">
       <div class="lang">Caption · Español</div>
-      <p>${p.es}</p>
+      <p id="dEs">${esc(p.es)}</p>
       <div class="lang">English</div>
-      <p class="en">${p.en}</p>
+      <p class="en" id="dEn">${esc(p.en)}</p>
     </div>
     <p class="why"><b>Why.</b> ${p.adwhy}</p>
     ${p.warn?`<div class="act warn"><div class="actlab">⚠︎ Careful</div><p>${p.warn}</p></div>`:""}
@@ -627,7 +636,7 @@ async function take(postId,kind,file){
   await putFile(id,{blob:file,name:file.name,type:file.type||"",pending:true});
   if(old){ if(URLS[old]){URL.revokeObjectURL(URLS[old]);delete URLS[old]} delFile(old).catch(()=>{}) }
   URLS[id]=URL.createObjectURL(file);
-  MEDIA[postId]=Object.assign({},MEDIA[postId],{[kind]:id});
+  touch(postId)[kind]=id;
   saveMedia(); render(); showPost(postId);
   toast(kind==="img"?"Cover replaced — saved on this device":"Video attached — saved on this device");
 }
@@ -635,8 +644,7 @@ async function clearMedia(postId,kind){
   const m=MEDIA[postId]; if(!m||!m[kind])return;
   const id=m[kind];
   if(URLS[id]){URL.revokeObjectURL(URLS[id]);delete URLS[id]}
-  delFile(id).catch(()=>{}); delete m[kind];
-  if(!m.img&&!m.video)delete MEDIA[postId];
+  delFile(id).catch(()=>{}); delete touch(postId)[kind];
   saveMedia(); render(); showPost(postId); toast("Back to the original");
 }
 
@@ -651,9 +659,13 @@ function drawUp(p){
    +(m.video?'<button class="upb" data-clear="video">Remove the video</button>':"")
    +'</div>'
    +'<p class="upnote">Covers go in <b>Choose a version</b> above — add as many as you like, tap one to put it on the feed. Saved straight onto this device; nothing leaves it until you press <b>Publish to GitHub</b>. JPG/PNG up to 12 MB, MP4 up to 45 MB.</p>'
-   +(mine?'<div class="fields">'
-      +'<div><label>Title</label><input data-f="title" value="'+esc(p.title||"")+'"></div>'
+   +'</div><div class="upbox"><div class="lab">Edit this post</div><div class="fields">'
+      +'<div><label>Status</label><select data-f="status">'
+        +["","Draft","Approved","Scheduled","Published"].map(x=>'<option value="'+x+'"'+((p.status||"")===x?" selected":"")+'>'+(x||"—")+'</option>').join("")
+      +'</select></div>'
+      +'<div><label>Scheduled date</label><input type="date" data-f="iso" value="'+esc(p.iso||"")+'"></div>'
       +'<div><label>Date shown</label><input data-f="date" value="'+esc(p.date||"")+'"></div>'
+      +'<div><label>Title</label><input data-f="title" value="'+esc(p.title||"")+'"></div>'
       +'<div><label>Format</label><input data-f="fmt" value="'+esc(p.fmt||"")+'"></div>'
       +'<div><label>Pillar</label><select data-f="pillar">'
         +["La casa","¿Y si lo prueba…?","English layer","Prueba social"].map(x=>'<option'+(p.pillar===x?" selected":"")+'>'+x+'</option>').join("")
@@ -661,8 +673,8 @@ function drawUp(p){
       +'<div><label>Sub-type</label><input data-f="sub" value="'+esc(p.sub||"")+'"></div>'
       +'<div><label>Caption · Español</label><textarea data-f="es" rows="4">'+esc(p.es||"")+'</textarea></div>'
       +'<div><label>Caption · English</label><textarea data-f="en" rows="4">'+esc(p.en||"")+'</textarea></div>'
-      +'<div><label>Notes to me</label><textarea data-f="adwhy" rows="2">'+esc(p.adwhy||"")+'</textarea></div>'
-      +'</div><p class="upnote">Typing saves as you go.</p>':"")
+      +'<div><label>Why / notes</label><textarea data-f="adwhy" rows="2">'+esc(p.adwhy||"")+'</textarea></div>'
+      +'</div><p class="upnote">Typing saves on this device as you go. Press <b>Publish</b> (bottom of the page) so the client and your phone see it.</p>'
    +'</div>';
 }
 function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;")}
@@ -680,11 +692,19 @@ detail.addEventListener("click",e=>{
   const c=e.target.closest("[data-clear]");
   if(c) clearMedia(current,c.dataset.clear);
 });
+const DAYS=["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+function setField(p,k,v){ p[k]=v; (EDITS[p.id]=EDITS[p.id]||{})[k]={v,t:Date.now()} }
 detail.addEventListener("input",e=>{
   const f=e.target.closest("[data-f]"); if(!f||!current)return;
-  const p=BY[current]; if(!isMine(p))return;
-  p[f.dataset.f]=f.value;
-  saveExtra();
+  const p=BY[current], k=f.dataset.f;
+  setField(p,k,f.value);
+  if(k==="iso"&&f.value){ const d=new Date(f.value+"T12:00:00");
+    setField(p,"date",DAYS[d.getDay()]+" "+d.getDate()+" "+MN[d.getMonth()]);
+    const di=detail.querySelector('[data-f="date"]'); if(di) di.value=p.date }
+  saveEdits(); if(isMine(p)) saveExtra();
+  const set=(id,v)=>{const n=document.getElementById(id); if(n) n.textContent=v};
+  set("dTitle",p.title||p.en.split("\n")[0]); set("dEs",p.es); set("dEn",p.en);
+  set("dWhen",p.date+" · "+(p.status||(p.live?"Published":"Scheduled")));
   const t=grid.querySelector('.t[data-id="'+current+'"]');
   if(t) t.setAttribute("aria-label",p.en||"");
 });
@@ -723,54 +743,81 @@ async function ghPut(path,content,msg){
   if(!r.ok) throw new Error("GitHub said "+r.status+" "+(await r.text()).slice(0,140));
 }
 
+/* --- merge a published snapshot into this device: newest change wins, nothing gets dropped --- */
+let PATHS={}, LASTPUB="";
+function merge(d){
+  if(!d||typeof d!=="object")return;
+  if(d.savedAt) LASTPUB=d.savedAt;
+  Object.assign(PATHS,d.paths||{});
+  (d.extra||[]).forEach(q=>{if(q&&q.id&&!BY[q.id]){POSTS.push(q);BY[q.id]=q;if(!order.includes(q.id))order.push(q.id)}});
+  saveExtra();
+  Object.entries(d.edits||{}).forEach(([pid,fl])=>Object.entries(fl).forEach(([k,o])=>{
+    const cur=(EDITS[pid]||{})[k]; if(!cur||(o.t||0)>(cur.t||0)) (EDITS[pid]=EDITS[pid]||{})[k]=o }));
+  saveEdits(); applyEdits();
+  Object.entries(d.media||{}).forEach(([pid,r])=>{
+    const l=MEDIA[pid]||{}, newer=(r.t||0)>(l.t||0)?r:l;
+    const gone=[...new Set([...(l.gone||[]),...(r.gone||[])])];
+    const vars=[]; [...(l.vars||[]),...(r.vars||[])].forEach(v=>{if(!gone.includes(v.mid)&&!vars.some(x=>x.mid===v.mid))vars.push(v)});
+    const m=Object.assign({},newer,{vars,gone});
+    if(m.img&&gone.includes(m.img)) delete m.img;
+    MEDIA[pid]=m;
+  });
+  Object.entries(PATHS).forEach(([id,p])=>{if(!URLS[id])URLS[id]=p});
+  saveMedia();
+  if(d.order&&(d.layoutT||1)>layoutT()&&!fromHash()){ apply({order:d.order,hidden:d.hidden,alts:d.alts}); save(d.layoutT||1) }
+  const key=v=>v.name+"|"+v.ts, seen=new Set(getV().map(key));
+  SHAREDV=(Array.isArray(d.versions)?d.versions:[]).filter(v=>!seen.has(key(v)));
+}
+
 async function publish(btn){
   if(!ghToken()){ toast("Paste your GitHub token first"); return }
   btn.disabled=true; const was=btn.textContent;
   try{
+    btn.textContent="Checking what is already published…";
+    const api="https://api.github.com/repos/"+GH.owner+"/"+GH.repo+"/contents/data/feed.json?ref="+GH.branch;
+    const cur=await fetch(api,{headers:{Authorization:"Bearer "+ghToken(),Accept:"application/vnd.github+json"},cache:"no-store"});
+    if(cur.ok){ const j=await cur.json(); try{merge(JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\n/g,""))))))}catch(e){} }
     const ids=new Set(); Object.values(MEDIA).forEach(m=>{if(m.img)ids.add(m.img);if(m.video)ids.add(m.video);(m.vars||[]).forEach(v=>ids.add(v.mid))});
-    let n=0; const paths={};
+    let n=0;
     for(const id of ids){
       const f=await getFile(id); if(!f)continue;
       const ext=(f.name.match(/\.[a-z0-9]+$/i)||[(f.type||"").startsWith("video")?".mp4":".jpg"])[0].toLowerCase();
-      const path="uploads/"+id+ext;
-      if(f.pending){ btn.textContent="Uploading "+(++n)+"/"+ids.size+"…";
+      const path=f.path||PATHS[id]||("uploads/"+id+ext);
+      if(f.pending||!(f.path||PATHS[id])){ btn.textContent="Uploading "+(++n)+"…";
         await ghPut(path,await b64(f.blob),"Upload "+path);
         await putFile(id,Object.assign({},f,{pending:false,path}));
       }
-      paths[id]=path;
+      PATHS[id]=path;
     }
     btn.textContent="Saving the arrangement…";
-    const payload={savedAt:new Date().toISOString(),order,hidden,
-      alts:state().alts, media:MEDIA, paths, extra:POSTS.filter(isMine), versions:getV()};
+    const key=v=>v.name+"|"+v.ts, vs=getV().concat(SHAREDV).filter((v,i,a)=>a.findIndex(x=>key(x)===key(v))===i);
+    const payload={savedAt:new Date().toISOString(),layoutT:layoutT()||Date.now(),order,hidden,
+      alts:state().alts, media:MEDIA, paths:PATHS, edits:EDITS, extra:POSTS.filter(isMine), versions:vs};
     await ghPut("data/feed.json",btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,1)))),"Save feed arrangement");
-    btn.textContent=was; btn.disabled=false;
-    toast("Published — live in about a minute");
+    LASTPUB=payload.savedAt; drawLast();
+    btn.textContent=was; btn.disabled=false; render(); showPost(current);
+    toast("Published — live on every device in about a minute");
   }catch(err){ btn.textContent=was; btn.disabled=false; toast(String(err.message||err)) }
 }
 
-/* --- on load, pull whatever was published so the client sees it --- */
+/* --- on load, pull whatever was published so every device sees it --- */
 async function pullPublished(){
   try{
-    const r=await fetch("data/feed.json?t="+Date.now()); if(!r.ok)return;
-    const d=await r.json(); if(!d)return;
-    (d.extra||[]).forEach(q=>{if(q&&q.id&&!BY[q.id]){POSTS.push(q);BY[q.id]=q}});
-    if(d.media&&d.paths) Object.entries(d.media).forEach(([pid,m])=>{
-      const cur=MEDIA[pid]||{};
-      ["img","video"].forEach(k=>{ const id=m[k];
-        if(id&&!cur[k]&&d.paths[id]){ MEDIA[pid]=Object.assign({},MEDIA[pid],{[k]:id}); URLS[id]=d.paths[id] } });
-    });
-    SHAREDV=Array.isArray(d.versions)?d.versions:[]; drawV();
-    if(!localStorage.getItem(KEY)) apply({order:d.order,hidden:d.hidden,alts:d.alts});
+    const r=await fetch("data/feed.json?t="+Date.now(),{cache:"no-store"}); if(!r.ok)return;
+    merge(await r.json()); drawV(); drawLast();
     render(); showPost(current||shown()[shown().length-1]);
   }catch(e){}
 }
+function drawLast(){const el=document.getElementById("ghlast"); if(!el)return;
+  el.textContent=LASTPUB?"Last published "+new Date(LASTPUB).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"Nothing published yet — the client and your phone only see the built-in posts."}
 
 /* --- the publish panel, under Saved versions --- */
 (function(){
   const box=document.createElement("details"); box.className="ghp";
   box.innerHTML='<summary>Publish to GitHub <i>— so Jen sees it too</i></summary>'
     +'<div class="ghb">'
-    +'<p>Your uploads and saved versions live only on this device until you publish. '
+    +'<p id="ghlast" style="font-weight:600"></p>'
+    +'<p>Your uploads, caption/date edits and saved versions live only on this device until you publish. '
     +'Publishing copies them into the repo, so <b>Jen and the client see exactly what you see.</b></p>'
     +'<p>Needs a <b>fine-grained token</b> scoped to <b>this one repo</b>, Contents → Read and write. '
     +'It is kept in this browser. This page is public, so treat the token as something only you should ever have on screen — '
@@ -827,17 +874,16 @@ async function addVar(postId,file){
   URLS[mid]=URL.createObjectURL(file);
   const m=MEDIA[postId]||{}; const vars=(m.vars||[]).slice();
   vars.push({mid,label:"Mía "+(vars.length+1)});
-  MEDIA[postId]=Object.assign({},m,{vars,img:mid});
+  MEDIA[postId]=Object.assign({},m,{vars,img:mid,t:Date.now()});
   saveMedia(); render(); showPost(postId);
   toast("Version added — it is on the feed now");
 }
 async function delVar(postId,mid){
-  const m=MEDIA[postId]; if(!m)return;
-  m.vars=(m.vars||[]).filter(v=>v.mid!==mid);
+  if(!MEDIA[postId])return; const m=touch(postId);
+  m.vars=(m.vars||[]).filter(v=>v.mid!==mid); m.gone=[...new Set([...(m.gone||[]),mid])];
   if(m.img===mid) delete m.img;
   if(URLS[mid]){URL.revokeObjectURL(URLS[mid]);delete URLS[mid]}
   delFile(mid).catch(()=>{});
-  if(!m.img&&!m.video&&!m.vars.length) delete MEDIA[postId];
   saveMedia(); render(); showPost(postId); toast("Version deleted");
 }
 
