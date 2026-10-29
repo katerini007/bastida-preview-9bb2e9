@@ -762,7 +762,7 @@ function mergeIn(d){
     const cur=(EDITS[pid]||{})[k]; if(!cur||(o.t||0)>(cur.t||0)) (EDITS[pid]=EDITS[pid]||{})[k]=o }));
   saveEdits(); applyEdits();
   Object.entries(d.media||{}).forEach(([pid,r])=>{
-    const l=MEDIA[pid]||{}, newer=(r.t||0)>(l.t||0)?r:l;
+    const l=MEDIA[pid]||{}, newer=(!MEDIA[pid]||(r.t||0)>(l.t||0))?r:l;
     const gone=[...new Set([...(l.gone||[]),...(r.gone||[])])];
     const vars=[]; [...(l.vars||[]),...(r.vars||[])].forEach(v=>{if(!gone.includes(v.mid)&&!vars.some(x=>x.mid===v.mid))vars.push(v)});
     const m=Object.assign({},newer,{vars,gone});
