@@ -1,5 +1,5 @@
 {
- "savedAt": "2026-10-29T18:24:10.234Z",
+ "savedAt": "2026-10-29T18:25:29.282Z",
  "layoutT": 1793297598568,
  "order": [
   "p5",
@@ -67,8 +67,16 @@
     "t": 1793298236359
    },
    "title": {
-    "v": "Building Bastida. Pica",
-    "t": 1793298245676
+    "v": "Building Bastida. Paul & Pica collab",
+    "t": 1793298263267
+   },
+   "es": {
+    "v": "Construyendo Bastida interior design con @PaulandPica\n\n",
+    "t": 1793298302617
+   },
+   "en": {
+    "v": "Creating Bastida interior design with @PaulandPica\n",
+    "t": 1793298324868
    }
   }
  },
