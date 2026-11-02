@@ -945,6 +945,78 @@ async function delVar(postId,mid){
 }
 
 
+/* ================= approve-to-publish: pick exactly what goes out, and when ================= */
+/* refs: "p:<repo path>" for built-in files, "m:<media id>" for uploads (resolved via PATHS) */
+function pubOpts(p){
+  const m=MEDIA[p.id]||{}, o=[];
+  if(m.video) o.push({ref:"m:"+m.video,kind:"video",th:"",label:"Your video"});
+  else if(p.video) o.push({ref:"p:"+p.video,kind:"video",th:"",label:"Video"});
+  (p.alts||[]).forEach(a=>o.push({ref:"p:"+a.img,kind:"img",th:a.img,label:a.label||"Option"}));
+  if(!(p.alts||[]).length&&p.img&&!/placeholder/.test(p.img)) o.push({ref:"p:"+p.img,kind:"img",th:p.img,label:"Original"});
+  (m.vars||[]).forEach(v=>{ if(!(m.gone||[]).includes(v.mid)) o.push({ref:"m:"+v.mid,kind:"img",th:URLS[v.mid]||"",label:v.label}) });
+  return o;
+}
+const PKINDS=[["reel","Reel"],["trial","Trial reel"],["photo","Photo"],["carousel","Carousel"]];
+function pubSel(p){try{return JSON.parse(p.pubsel||"[]")}catch(e){return[]}}
+function pubProblems(p){
+  const k=p.pubkind||"reel", sel=pubSel(p), opts=pubOpts(p), kinds=sel.map(r=>(opts.find(o=>o.ref===r)||{}).kind);
+  const w=[];
+  if(!p.iso) w.push("no date");
+  if(!sel.length) w.push("nothing selected");
+  if((k==="reel"||k==="trial")&&!(sel.length===1&&kinds[0]==="video")) w.push("a reel needs exactly one video");
+  if(k==="photo"&&!(sel.length===1&&kinds[0]==="img")) w.push("a photo post needs exactly one image");
+  if(k==="carousel"&&(sel.length<2||sel.length>10)) w.push("a carousel needs 2–10 items");
+  return w;
+}
+function pubCaption(p){ const L=p.publang||"es";
+  return L==="en"?(p.en||""):L==="both"?((p.es||"")+"\n\n"+(p.en||"")).trim():(p.es||""); }
+function pubRefresh(p){
+  if(p.pubok!=="yes"){ if(p.pubsnap) setField(p,"pubsnap",""); return }
+  setField(p,"pubsnap",JSON.stringify({kind:p.pubkind||"reel",at:(p.iso||"")+"T"+(p.time||"12:00"),
+    media:pubSel(p),caption:pubCaption(p),ok:!pubProblems(p).length}));
+}
+function pubBox(p){
+  const k=p.pubkind||"reel", sel=pubSel(p), probs=pubProblems(p), ok=p.pubok==="yes";
+  let o='<div class="upbox" id="pubz" style="border:2px solid '+(ok?(probs.length?"#d9822b":"#3a8f5c"):"#e6dcef")+'">'
+   +'<div class="lab">Publishing to Instagram</div>'
+   +'<label style="display:flex;gap:8px;align-items:center;font-weight:700;margin:6px 0 10px"><input type="checkbox" data-pub="ok"'+(ok?" checked":"")+'> Approved: post this at the date and time below</label>'
+   +'<div class="fields" style="display:grid;grid-template-columns:1fr 1fr;gap:9px">'
+   +'<div><label>Post as</label><select data-pub="kind">'+PKINDS.map(([v,t])=>'<option value="'+v+'"'+(k===v?" selected":"")+'>'+t+'</option>').join("")+'</select></div>'
+   +'<div><label>Time</label><input type="time" data-pub="time" value="'+esc(p.time||"12:00")+'"></div>'
+   +'<div style="grid-column:1/-1"><label>Caption</label><select data-pub="lang">'
+   +[["es","Español"],["en","English"],["both","Español + English"]].map(([v,t])=>'<option value="'+v+'"'+((p.publang||"es")===v?" selected":"")+'>'+t+'</option>').join("")+'</select></div></div>'
+   +'<p class="upnote" style="margin:10px 0 6px">'+(k==="carousel"?"Tap the items to use, <b>in order</b> (the numbers show the order).":"Tap the <b>one</b> item to post.")+'</p><div class="opts">';
+  pubOpts(p).forEach(x=>{ const i=sel.indexOf(x.ref);
+    o+='<button type="button" data-pubref="'+esc(x.ref)+'" aria-pressed="'+(i>=0)+'" style="position:relative">'
+      +'<figure>'+(x.kind==="video"?'<span style="display:grid;place-items:center;height:100%;font-size:22px">▶</span>':'<img src="'+esc(x.th)+'" alt="">')+'</figure>'
+      +'<span class="cap2"><i></i>'+esc(x.label)+'</span>'
+      +(i>=0?'<b style="position:absolute;top:4px;left:4px;background:#3a8f5c;color:#fff;border-radius:50%;width:22px;height:22px;display:grid;place-items:center;font-size:12px">'+(i+1)+'</b>':"")+'</button>' });
+  o+='</div>'
+   +(ok?'<p class="upnote" style="color:'+(probs.length?"#b35c00":"#2c6e46")+';font-weight:600">'+(probs.length?"Not ready: "+probs.join(" · ")+". It will not be posted until this is fixed.":"✓ Ready. It goes out on "+esc(p.date||p.iso)+" at "+esc(p.time||"12:00")+" (once posting is switched on).")+'</p>'
+       :'<p class="upnote">Not approved, so it will not be posted.</p>')
+   +'</div>';
+  return o;
+}
+const _drawUp=drawUp;
+drawUp=function(p){ _drawUp(p); const z=document.getElementById("upz"); if(z) z.insertAdjacentHTML("afterbegin",pubBox(p)); };
+function pubRedraw(p){ pubRefresh(p); saveEdits(); if(isMine(p)) saveExtra();
+  const b=document.getElementById("pubz"); if(b) b.outerHTML=pubBox(p); }
+detail.addEventListener("click",e=>{ const b=e.target.closest("[data-pubref]"); if(!b||!current)return;
+  const p=BY[current], r=b.dataset.pubref, k=p.pubkind||"reel"; let s=pubSel(p);
+  if(k==="carousel") s=s.includes(r)?s.filter(x=>x!==r):s.concat(r);
+  else s=s[0]===r?[]:[r];
+  setField(p,"pubsel",JSON.stringify(s)); pubRedraw(p); });
+detail.addEventListener("change",e=>{ const f=e.target.closest("[data-pub]"); if(!f||!current)return;
+  const p=BY[current], k=f.dataset.pub;
+  if(k==="ok") setField(p,"pubok",f.checked?"yes":"");
+  if(k==="kind"){ setField(p,"pubkind",f.value); if(f.value!=="carousel"){const s=pubSel(p); if(s.length>1) setField(p,"pubsel",JSON.stringify(s.slice(0,1)))} }
+  if(k==="time") setField(p,"time",f.value);
+  if(k==="lang") setField(p,"publang",f.value);
+  pubRedraw(p); if(k==="ok") toast(f.checked?"Approved":"Approval removed"); });
+/* keep the snapshot in step when the caption or date is edited elsewhere in the panel */
+detail.addEventListener("input",e=>{ if(!current||e.target.closest("[data-pub]"))return; const p=BY[current];
+  if(p&&p.pubok==="yes"){ pubRefresh(p); saveEdits() } });
+
 /* ================= stories: day circles, a viewer, on-screen text per story ================= */
 var STORIES=[
  {id:"s_1030_1",iso:"2026-10-30",kind:"img",src:"stories/2026-10-30-1.jpg",thumb:"stories/2026-10-30-1-t.jpg",ost:""},
@@ -1003,6 +1075,7 @@ function drawStories(){
         +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">'
         +'<div><label>Date</label><input type="date" data-sf="iso" data-sid="'+x.id+'" value="'+esc(x.iso)+'"></div>'
         +'<div><label>Time</label><input type="time" data-sf="time" data-sid="'+x.id+'" value="'+esc(x.time||"")+'"></div></div>'
+        +'<label style="display:flex;gap:8px;align-items:center;font-weight:700"><input type="checkbox" data-sok="'+x.id+'"'+(x.pubok==="yes"?" checked":"")+'> Approved: post this story at this date and time</label>'
         +'<div><label>Notes</label><textarea data-sf="note" data-sid="'+x.id+'" rows="2" placeholder="Sticker, link, music…">'+esc(x.note||"")+'</textarea></div>'
         +'<p style="margin:0"><button class="danger" data-sdel="'+x.id+'">Remove this story</button></p>'
         +'</div></div>' }).join("")+'</div>'
@@ -1028,6 +1101,19 @@ SB.addEventListener("input",e=>{ const f=e.target.closest("[data-sf]"); if(!f)re
 SB.addEventListener("change",e=>{ const f=e.target.closest('[data-sf="iso"]'); if(!f||!f.value)return;
   const x=SBY[f.dataset.sid]; if(!x)return;
   setField(x,"iso",f.value); saveEdits(); SSEL=f.value; drawStories(); toast("Moved to "+dayLab(f.value)); });
+
+/* story approvals: a self-contained snapshot the uploader reads */
+function sRefresh(x){
+  if(x.pubok!=="yes"){ if(x.pubsnap) setField(x,"pubsnap",""); return }
+  const m=MEDIA[x.id]||{}, k=m.video||m.img, ref=k?"m:"+k:(x.src?"p:"+x.src:"");
+  setField(x,"pubsnap",JSON.stringify({kind:"story",at:x.iso+"T"+(x.time||"12:00"),media:ref?[ref]:[],ok:!!(ref&&x.iso&&!x.gone)}));
+}
+SB.addEventListener("change",e=>{ const c=e.target.closest("[data-sok]"); if(!c)return; const x=SBY[c.dataset.sok]; if(!x)return;
+  setField(x,"pubok",c.checked?"yes":""); sRefresh(x); saveEdits(); toast(c.checked?"Story approved":"Approval removed") });
+SB.addEventListener("input",e=>{ const f=e.target.closest("[data-sf]"); if(!f)return; const x=SBY[f.dataset.sid];
+  if(x&&x.pubok==="yes"){ sRefresh(x); saveEdits() } });
+SB.addEventListener("change",e=>{ const f=e.target.closest('[data-sf="iso"]'); if(!f)return; const x=SBY[f.dataset.sid];
+  if(x&&x.pubok==="yes"){ sRefresh(x); saveEdits() } });
 
 async function addStory(iso,file){
   const kind=(file.type||"").startsWith("video")?"video":"img";
