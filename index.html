@@ -387,6 +387,7 @@ const POSTS=[
   warn:"The sports bra carries another brand's logo. Reshoot in Bastida kit, or frame it out.",
   note:"Colocado justo después del carrusel «Creando Bastida · Parte 2» (10 Nov) — dime si prefieres otro día.",
   alt:0,alts:[{label:"Opción 1",img:"covers/a1.jpg"},{label:"Opción 2",img:"covers/a2.jpg"}]},
+ {id:"n4",iso:"2026-11-14",n:"10",img:"carousels/n4/1.jpg",date:"Sáb 14 Nov",fmt:"Carousel",pillar:"La casa",sub:"Build with us · Colaboración bsport",goal:"Reach",ad:"no",adwhy:"Collab with bsport, our booking platform. Short, aspirational reveal that tells the city booking opens in January 2027 and points to the waitlist.",title:"Booking opens January 2027 — collab with bsport",es:"Reservar tu clase en Bastida será así de fácil. 🤍\n\nA partir de enero de 2027 podrás reservar tus clases con bsport, nuestra plataforma de reservas.\n\nApúntate a la lista de espera (enlace en la bio) y serás de las primeras en saberlo.",en:"Booking your class at Bastida is going to be this easy. 🤍\n\nFrom January 2027 you'll be able to book your classes with bsport, our booking platform.\n\nJoin the waitlist (link in bio) and be the first to know.",note:"Carrusel de 2 imágenes (colab bsport). Texto del pie = borrador, pendiente de tu versión.",after:"as",ratio:"3/4",pubkind:"carousel",pubsel:"[\"p:carousels/n4/1.jpg\", \"p:carousels/n4/2.jpg\"]",slides:[{"k": "img", "s": "carousels/n4/1.jpg"}, {"k": "img", "s": "carousels/n4/2.jpg"}]},
  {id:"p8",img:"covers/p8.jpg",date:"Sin fecha",fmt:"Photo",pillar:"La casa",sub:"ASMR",
   goal:"Reach",ad:"no",adwhy:"Atmosphere. Unscheduled — hold it for a slot that needs filling.",
   title:"Matcha and a wax seal.",
@@ -552,7 +553,7 @@ function slidesView(p){
   if(!p.slides||!p.slides.length)return "";
   const n=p.slides.length, nv=p.slides.filter(x=>x.k==="video").length;
   return '<div class="car"><div class="carwrap"><div class="cartrack">'
-   +p.slides.map((x,i)=>'<div class="cs">'
+   +p.slides.map((x,i)=>'<div class="cs"'+(p.ratio?' style="aspect-ratio:'+esc(p.ratio)+'"':'')+'>'
      +(x.k==="video"
         ?'<video src="'+esc(x.s)+'" poster="'+esc(x.poster||"")+'" controls loop muted playsinline preload="metadata"></video><span class="cv">▶ video</span>'
         :'<img src="'+esc(x.s)+'" alt="Page '+(i+1)+'" draggable="false">')
