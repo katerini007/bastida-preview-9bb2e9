@@ -150,6 +150,34 @@ h1{font-family:var(--fd);font-weight:400;font-size:clamp(30px,4.6vw,42px);line-h
 .row .nt{color:var(--dim);font-size:13px;margin:0}
 .row .live{color:var(--clay)}
 
+/* carousel viewer */
+/* let grid children shrink to the phone width instead of stretching to their widest content */
+.side{grid-template-columns:minmax(0,1fr)}
+#detail,.side>*{min-width:0}
+.upbox .opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:10px;max-width:340px}
+.upbox .opts button{border:0;background:none;padding:0;cursor:pointer;text-align:left;display:grid;gap:6px;min-width:0}
+.upbox .opts figure{margin:0;aspect-ratio:4/5;overflow:hidden;border-radius:3px;outline:1px solid var(--hair);outline-offset:-1px;background:var(--tint)}
+.upbox .opts img{width:100%;height:100%;object-fit:cover;display:block}
+.upbox .opts button[aria-pressed="true"] figure{outline:2px solid #3a8f5c;outline-offset:-2px}
+.upbox .opts .cap2{font-size:10.5px;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.upbox .opts .cap2 i{display:none}
+.car{margin:16px 0 4px;max-width:430px}
+.carwrap{position:relative}
+.cartrack{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  border-radius:6px;outline:1px solid var(--hair);outline-offset:-1px;background:#000}
+.cartrack::-webkit-scrollbar{display:none}
+.cs{flex:0 0 100%;scroll-snap-align:start;scroll-snap-stop:always;aspect-ratio:4/5;position:relative;background:#000}
+.cs img,.cs video{width:100%;height:100%;object-fit:cover;display:block}
+.cn,.cv{position:absolute;top:9px;font-size:10px;letter-spacing:.08em;color:#fff;background:rgba(0,0,0,.45);padding:3px 8px;border-radius:99px;pointer-events:none}
+.cn{right:10px}.cv{left:10px}
+.carb{position:absolute;top:calc(50% - 18px);width:36px;height:36px;border-radius:50%;border:0;cursor:pointer;
+  background:rgba(255,253,248,.88);color:var(--fg);font-size:22px;line-height:1;display:grid;place-items:center;box-shadow:0 1px 6px rgba(0,0,0,.25)}
+.carb.prev{left:8px}.carb.next{right:8px}
+.cardots{display:flex;gap:6px;justify-content:center;margin:11px 0 2px}
+.cardots i{width:6px;height:6px;border-radius:50%;background:var(--hair);transition:background .2s}
+.cardots i.on{background:var(--clay)}
+.carnote{margin:6px 0 0;text-align:center;font-size:11.5px;color:var(--dim)}
+
 /* A/B picker */
 .ab{margin-top:14px}
 .ab .lab{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--clay);margin-bottom:9px}
@@ -351,12 +379,13 @@ const POSTS=[
   es:"Spooky season, en versión pilates. 👻\n\nY sí, el reformer también da miedo el primer día.",
   en:"Spooky season, pilates style. 👻\n\nAnd yes, the reformer is scary on day one too.",
   alt:0,alts:[{label:"1 · Groovy Ghost",img:"covers/h1.jpg"},{label:"2 · Sin texto",img:"covers/h2.jpg"},{label:"3 · Spooky Season",img:"covers/h3.jpg"}]},
- {id:"as",img:"covers/a1.jpg",date:"Sin fecha",fmt:"Reel",pillar:"La casa",sub:"ASMR",
+ {id:"n3",iso:"2026-11-10",n:"9",img:"carousels/n3/1.jpg",date:"Mar 10 Nov",fmt:"Carousel",pillar:"La casa",sub:"Build with us · Parte 2",goal:"Reach",ad:"no",adwhy:"Behind-the-scenes is the pre-opening spine and already travels on its own, so it stays organic. Part 2 of the build story: reformers arriving, bsport as the booking platform, and the 3-metre banner teaser.",title:"Creating Bastida Pilates in Jerez — Part 2",es:"¡Quién nos iba a decir que convertir una antigua discoteca en nuestro estudio de Pilates daría para tanto! 🫠🤍\n\nObras, noches sin dormir, llamadas interminables… ¡y nuestros Reformers que por fin están llegando!\n\nEstamos cuidando cada detalle, ¡incluso cómo reservaréis vuestras clases! Después de muchísimas llamadas y comparaciones, hemos elegido bsport como nuestra plataforma de reservas, que estará disponible a partir de enero.\n\nY ahora… ¡tenemos algo GRANDE entre manos! 👀\n\nQueremos que todo Jerez conozca Bastida, incluso quienes no están en Instagram. ¡Así que hemos encargado una pancarta gigante de 3 metros! 😂\n\n¡Qué ganas de contaros todo sobre nuestro evento de apertura y conoceros en persona!\n\nVolved la semana que viene para descubrir dónde la colocamos. 🫶",en:"Who knew turning a former nightclub into our Pilates studio would involve THIS much work? 🫠🤍\n\nRenovations, sleepless nights, endless calls… and our Reformers are FINALLY arriving!\n\nWe're taking care of every detail, even how you'll book your classes! After countless calls and comparisons, we've chosen bsport as our booking platform, available from January onwards.\n\nAnd now… we've got something BIG coming! 👀\n\nWe want everyone in Jerez to know about Bastida, even those who aren't on Instagram. So we've ordered a HUGE 3-metre banner! 😂\n\nWe can't wait to share our opening event details and finally meet you in person!\n\nCome back next week to see where we're putting it. 🫶",note:"Carrusel de 6 páginas: 4 imágenes + 2 vídeos (páginas 4 y 6), en este orden. Desliza para verlas todas.",after:"n1",pubkind:"carousel",pubsel:"[\"p:carousels/n3/1.jpg\", \"p:carousels/n3/2.jpg\", \"p:carousels/n3/3.jpg\", \"p:carousels/n3/4.mp4\", \"p:carousels/n3/5.jpg\", \"p:carousels/n3/6.mp4\"]",slides:[{"k": "img", "s": "carousels/n3/1.jpg"}, {"k": "img", "s": "carousels/n3/2.jpg"}, {"k": "img", "s": "carousels/n3/3.jpg"}, {"k": "video", "s": "carousels/n3/4.mp4", "poster": "carousels/n3/4.jpg"}, {"k": "img", "s": "carousels/n3/5.jpg"}, {"k": "video", "s": "carousels/n3/6.mp4", "poster": "carousels/n3/6.jpg"}]},
+ {id:"as",iso:"2026-11-11",img:"covers/a1.jpg",date:"Mié 11 Nov",fmt:"Reel",pillar:"La casa",sub:"ASMR",
   goal:"Reach",ad:"no",adwhy:"Atmosphere travels on its own at every studio measured. Organic.",
   title:"Matcha and the set, laid out.",
   es:"Preparar el bolso ya es parte del ritual. 🍵",en:"Laying it out is already part of the ritual. 🍵",
   warn:"The sports bra carries another brand's logo. Reshoot in Bastida kit, or frame it out.",
-  note:"Sin fecha — dime en qué día la quieres y la coloco.",
+  note:"Colocado justo después del carrusel «Creando Bastida · Parte 2» (10 Nov) — dime si prefieres otro día.",
   alt:0,alts:[{label:"Opción 1",img:"covers/a1.jpg"},{label:"Opción 2",img:"covers/a2.jpg"}]},
  {id:"p8",img:"covers/p8.jpg",date:"Sin fecha",fmt:"Photo",pillar:"La casa",sub:"ASMR",
   goal:"Reach",ad:"no",adwhy:"Atmosphere. Unscheduled — hold it for a slot that needs filling.",
@@ -407,7 +436,7 @@ function toHash(){const s=JSON.stringify(state());
 const shown=()=>order.filter(i=>!hidden.includes(i));
 function state(){const alts={};POSTS.forEach(q=>{if(q.alts)alts[q.id]=q.alt});return{order,alts,hidden}}
 function apply(s){ if(!s)return;
-  if(Array.isArray(s.order)){const k=s.order.filter(i=>BY[i]);POSTS.forEach(q=>{if(!k.includes(q.id))k.push(q.id)});order=k}
+  if(Array.isArray(s.order)){const k=s.order.filter(i=>BY[i]);POSTS.forEach(q=>{if(!k.includes(q.id)){const a=q.after?k.indexOf(q.after):-1;if(a>=0)k.splice(a+1,0,q.id);else k.push(q.id)}});order=k}
   if(s.alts) Object.entries(s.alts).forEach(([k,v])=>{if(BY[k]&&BY[k].alts&&BY[k].alts[v])BY[k].alt=v});
   if(Array.isArray(s.hidden)) hidden=s.hidden.filter(i=>BY[i]); }
 apply(fromHash());
@@ -422,7 +451,7 @@ function render(){
   grid.innerHTML=[...shown()].reverse().map(id=>{const p=BY[id];
     return `<button class="t" data-id="${id}" aria-label="${p.en.replace(/"/g,'&quot;')}">
       <img src="${src(p)}" alt="" draggable="false">
-      <span class="ic">${ICON[p.fmt]||""}</span>
+      <span class="ic">${ICON[p.fmt]||(p.slides?"❏":"")}</span>
       ${vsrc(p)?'<span class="play"><span>▶</span></span>':""}
     </button>`}).join("");
   document.getElementById("np").textContent=order.filter(i=>!hidden.includes(i)).length;
@@ -490,6 +519,7 @@ function showPost(id){
     <p class="num">${p.n||"·"}</p>
     <p class="when" id="dWhen">${esc(p.date)} · ${esc(p.status||(p.live?"Published":"Scheduled"))}</p>
     <h2 id="dTitle">${esc(p.title||p.en.split("\n")[0])}</h2>
+    ${slidesView(p)}
     <dl class="facts">
       <div><dt>Format</dt><dd>${p.fmt}${p.cover?`<br><span style="color:var(--dim);font-weight:400;font-size:11.5px">cover only</span>`:""}</dd></div>
       <div><dt>Content pillar</dt><dd>${p.pillar}<br><span style="color:var(--dim);font-weight:400">${p.sub}</span></dd></div>
@@ -508,13 +538,40 @@ function showPost(id){
     ${p.scripts?p.scripts.map((s,i)=>`<details class="scr"${i===0?" open":""}><summary>Guión · ${s.label}</summary><p>${s.text}</p></details>`).join(""):""}
     ${p.scriptEs?`<details class="scr" open><summary>Guión · Opción 1 (larga) — Español</summary><p>${p.scriptEs}</p></details>`:""}
     ${p.scriptEn?`<details class="scr"><summary>Guión · Opción 1 (larga) — English</summary><p>${p.scriptEn}</p></details>`:""}
-    ${versions(p)}
+    ${p.slides?"":versions(p)}
     ${p.live?`<p style="margin:16px 0 0"><a class="igl" href="${p.live}" target="_blank" rel="noopener">View on Instagram →</a></p>`:""}
     ${vsrc(p)?`<p style="margin:16px 0 0;font-size:12.5px;color:var(--dim)">Tap the tile to play the reel.</p>`:""}
     <div id="upz"></div>
     <p style="margin:22px 0 0;border-top:1px solid var(--hair);padding-top:14px">
       <button class="danger" data-remove="${p.id}">Remove this post from the feed</button></p>`;
-  drawUp(p);
+  drawUp(p); initCar();
+}
+
+/* carousel viewer: swipe through every page; videos play inline in their place */
+function slidesView(p){
+  if(!p.slides||!p.slides.length)return "";
+  const n=p.slides.length, nv=p.slides.filter(x=>x.k==="video").length;
+  return '<div class="car"><div class="carwrap"><div class="cartrack">'
+   +p.slides.map((x,i)=>'<div class="cs">'
+     +(x.k==="video"
+        ?'<video src="'+esc(x.s)+'" poster="'+esc(x.poster||"")+'" controls loop muted playsinline preload="metadata"></video><span class="cv">▶ video</span>'
+        :'<img src="'+esc(x.s)+'" alt="Page '+(i+1)+'" draggable="false">')
+     +'<span class="cn">'+(i+1)+'/'+n+'</span></div>').join("")
+   +'</div><button type="button" class="carb prev" data-cardir="-1" aria-label="Previous page">‹</button>'
+   +'<button type="button" class="carb next" data-cardir="1" aria-label="Next page">›</button></div>'
+   +'<div class="cardots">'+p.slides.map((x,i)=>'<i'+(i?'':' class="on"')+'></i>').join("")+'</div>'
+   +'<p class="carnote">Swipe or use the arrows · '+n+' pages'+(nv?' · '+nv+' video'+(nv>1?'s':'')+' (tap to unmute)':'')+'</p></div>';
+}
+function initCar(){
+  const c=detail.querySelector(".car"); if(!c)return;
+  const tr=c.querySelector(".cartrack"), dots=[...c.querySelectorAll(".cardots i")], vids=[...c.querySelectorAll("video")];
+  const idx=()=>Math.round(tr.scrollLeft/Math.max(1,tr.clientWidth));
+  const sync=()=>{const i=idx(); dots.forEach((d,k)=>d.classList.toggle("on",k===i));
+    vids.forEach(v=>{ if(v.closest(".cs")===tr.children[i]){v.play().catch(()=>{})}else{v.pause()} })};
+  tr.addEventListener("scroll",()=>{clearTimeout(tr._t);tr._t=setTimeout(sync,90)});
+  c.addEventListener("click",e=>{const b=e.target.closest("[data-cardir]"); if(!b)return;
+    const i=Math.max(0,Math.min(dots.length-1,idx()+(+b.dataset.cardir)));
+    tr.scrollTo({left:i*tr.clientWidth,behavior:"smooth"})});
 }
 
 /* share the arrangement back */
@@ -948,6 +1005,7 @@ async function delVar(postId,mid){
 /* ================= approve-to-publish: pick exactly what goes out, and when ================= */
 /* refs: "p:<repo path>" for built-in files, "m:<media id>" for uploads (resolved via PATHS) */
 function pubOpts(p){
+  if(p.slides) return p.slides.map((x,i)=>({ref:"p:"+x.s,kind:x.k==="video"?"video":"img",th:x.k==="video"?"":x.s,label:"Page "+(i+1)}));
   const m=MEDIA[p.id]||{}, o=[];
   if(m.video) o.push({ref:"m:"+m.video,kind:"video",th:"",label:"Your video"});
   else if(p.video) o.push({ref:"p:"+p.video,kind:"video",th:"",label:"Video"});
