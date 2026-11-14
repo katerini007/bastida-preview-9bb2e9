@@ -841,13 +841,19 @@ const b64=blob=>new Promise(res=>{const r=new FileReader();
 
 async function ghPut(path,content,msg){
   const t=ghToken(), base="https://api.github.com/repos/"+GH.owner+"/"+GH.repo+"/contents/"+path;
-  let sha=null;
-  const probe=await fetch(base+"?ref="+GH.branch,{headers:{Authorization:"Bearer "+t,Accept:"application/vnd.github+json"}});
-  if(probe.ok){ sha=(await probe.json()).sha }
-  const r=await fetch(base,{method:"PUT",
-    headers:{Authorization:"Bearer "+t,Accept:"application/vnd.github+json","Content-Type":"application/json"},
-    body:JSON.stringify(Object.assign({message:msg,content,branch:GH.branch},sha?{sha}:{}))});
-  if(!r.ok) throw new Error("GitHub said "+r.status+" "+(await r.text()).slice(0,140));
+  // Retry on a stale-sha conflict (409/422): two quick saves (e.g. ticking Approved) can race,
+  // and the loser used to throw and drop its change. Re-read the sha and try again.
+  for(let attempt=0;attempt<4;attempt++){
+    let sha=null;
+    const probe=await fetch(base+"?ref="+GH.branch,{headers:{Authorization:"Bearer "+t,Accept:"application/vnd.github+json"},cache:"no-store"});
+    if(probe.ok){ sha=(await probe.json()).sha }
+    const r=await fetch(base,{method:"PUT",
+      headers:{Authorization:"Bearer "+t,Accept:"application/vnd.github+json","Content-Type":"application/json"},
+      body:JSON.stringify(Object.assign({message:msg,content,branch:GH.branch},sha?{sha}:{}))});
+    if(r.ok) return;
+    if((r.status===409||r.status===422)&&attempt<3){ await new Promise(s=>setTimeout(s,400*(attempt+1))); continue; }
+    throw new Error("GitHub said "+r.status+" "+(await r.text()).slice(0,140));
+  }
 }
 
 /* --- merge a published snapshot into this device: newest change wins, nothing gets dropped --- */
