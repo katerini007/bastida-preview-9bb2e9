@@ -1,6 +1,6 @@
 {
- "savedAt": "2026-11-14T19:09:21.753Z",
- "layoutT": 1793633348225,
+ "savedAt": "2026-11-14T19:12:46.407Z",
+ "layoutT": 1794683367816,
  "order": [
   "p5",
   "live1",
@@ -174,7 +174,21 @@
    },
    "pubsel": {
     "v": "[\"p:covers/a1.jpg\"]",
-    "t": 1794683361500
+    "t": 1794683365863
+   },
+   "pubok": {
+    "v": "yes",
+    "t": 1794683392662
+   },
+   "pubsnap": {
+    "v": "{\"kind\":\"photo\",\"at\":\"2026-11-14T20:11\",\"media\":[\"p:covers/a1.jpg\"],\"caption\":\"La constancia requiere mucha ropa deportiva.\\n\\nConsistency requires a lot of activewear.\",\"ok\":true}",
+    "t": 1794683392662
+   }
+  },
+  "n4": {
+   "publang": {
+    "v": "both",
+    "t": 1794683561881
    }
   }
  },
