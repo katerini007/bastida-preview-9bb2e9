@@ -1,6 +1,6 @@
 {
- "savedAt": "2026-11-02T15:29:02.083Z",
- "layoutT": 1793633337496,
+ "savedAt": "2026-11-14T19:08:20.845Z",
+ "layoutT": 1793633348225,
  "order": [
   "p5",
   "live1",
@@ -14,7 +14,9 @@
   "hw",
   "p9",
   "n1",
+  "n3",
   "as",
+  "n4",
   "p8"
  ],
  "hidden": [
@@ -24,7 +26,7 @@
  "alts": {
   "p4": 0,
   "p2": 0,
-  "n1": 0,
+  "n1": 1,
   "hw": 0,
   "as": 0,
   "p5": 0
@@ -135,6 +137,12 @@
    "en": {
     "v": "Barre is coming to Jerez. 🤍🩰\n\nA little ballet, a little Pilates, a whole lot of shaking.\n\nSculpt stronger muscles, improve your posture and discover why those tiny movements are so addictive.\n\nComing soon to Bastida. ✨\n\nJoin our waitlist — link in bio.",
     "t": 1793299279832
+   }
+  },
+  "as": {
+   "es": {
+    "v": "La constancia requiere mucha ropa deportiva.",
+    "t": 1794683296048
    }
   }
  },
