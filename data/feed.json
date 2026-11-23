@@ -211,8 +211,8 @@
   },
   "n6": {
    "pubsel": {
-    "v": "[\"p:covers/n6es.jpg\"]",
-    "t": 1795466380419
+    "v": "[\"p:covers/n6es.jpg\",\"p:covers/n6en.jpg\"]",
+    "t": 1795466471279
    }
   }
  },
