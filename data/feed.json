@@ -1,6 +1,6 @@
 {
- "savedAt": "2026-11-14T19:12:46.407Z",
- "layoutT": 1794683367816,
+ "savedAt": "2026-11-23T19:03:05.247Z",
+ "layoutT": 1795460580432,
  "order": [
   "p5",
   "live1",
@@ -17,6 +17,9 @@
   "n3",
   "as",
   "n4",
+  "n7",
+  "n6",
+  "n5",
   "p8"
  ],
  "hidden": [
@@ -29,6 +32,8 @@
   "n1": 1,
   "hw": 0,
   "as": 0,
+  "n5": 0,
+  "n6": 0,
   "p5": 0
  },
  "media": {
@@ -189,6 +194,10 @@
    "publang": {
     "v": "both",
     "t": 1794683561881
+   },
+   "en": {
+    "v": "We've chosen our booking partner to make your booking experience very smooth. Booking your class at Bastida is going to be this easy. 🤍\n\nFrom January 2027 you'll be able to book your classes with bsport, our booking platform.\n\nJoin the waitlist (link in bio) and be the first to know.",
+    "t": 1794683613731
    }
   }
  },
