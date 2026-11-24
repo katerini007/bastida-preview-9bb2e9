@@ -1,5 +1,5 @@
 {
- "savedAt": "2026-11-23T21:06:06.779Z",
+ "savedAt": "2026-11-24T08:35:33.465Z",
  "layoutT": 1795467948075,
  "order": [
   "p5",
@@ -283,6 +283,12 @@
    "pubsel": {
     "v": "[]",
     "t": 1795467902511
+   }
+  },
+  "n3": {
+   "pubsel": {
+    "v": "[\"p:carousels/n3/3.jpg\",\"p:carousels/n3/4.mp4\",\"p:carousels/n3/5.jpg\",\"p:carousels/n3/6.mp4\",\"p:carousels/n3/1.jpg\",\"p:carousels/n3/2.jpg\"]",
+    "t": 1795509328702
    }
   }
  },
